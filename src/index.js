@@ -5,8 +5,14 @@
  */
 
 import allLocaleData from '../locale-data/index';
-import {addLocaleData} from './react-intl';
+import { Formatter, addLocaleData, defineMessages } from './intl-format';
 
-export * from './react-intl';
+export {
+    addLocaleData,
+    defineMessages,
+    Formatter
+};
+
+export default Formatter; // TODO: How to export a default in the browser w/out rediculous names?
 
 addLocaleData(allLocaleData);

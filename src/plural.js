@@ -6,7 +6,7 @@
 
 // This is a "hack" until a proper `intl-pluralformat` package is created.
 
-import IntlMessageFormat from 'intl-messageformat';
+import IntlMessageFormat from 'tag-messageformat';
 
 function resolveLocale(locales) {
   // IntlMessageFormat#_resolveLocale() does not depend on `this`.

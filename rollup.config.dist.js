@@ -14,26 +14,17 @@ const copyright = `/*
  */
 `;
 
-const reactCheck = `if (typeof React === 'undefined') {
-    throw new ReferenceError('React must be loaded before ReactIntl.');
-}
-`;
-
 export default {
-  input: p.resolve('src/react-intl.js'),
+  input: p.resolve('src/intl-format.js'),
   output: {
-    file: p.resolve(`dist/react-intl.${isProduction ? 'min.js' : 'js'}`),
+    file: p.resolve(`dist/intl-format.${isProduction ? 'min.js' : 'js'}`),
     format: 'umd',
   },
-  name: 'ReactIntl',
+  name: 'IntlFormat',
   banner: copyright,
-  intro: reactCheck,
+  exports: 'named',
   sourcemap: true,
-  globals: {
-    react: 'React',
-    'prop-types': 'PropTypes',
-  },
-  external: ['react', 'prop-types'],
+  external: [],
   plugins: [
     babel(),
     nodeResolve({

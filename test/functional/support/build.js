@@ -1,5 +1,5 @@
 import expect from 'expect';
-import * as ReactIntl from '../../../src/';
+import * as IntlFormat from '../../../src/';
 
 export default function (buildPath) {
     describe('build', () => {
@@ -7,11 +7,11 @@ export default function (buildPath) {
             expect(require(buildPath)).toExist();
         });
 
-        it('has all React Intl exports', () => {
-            const ReactIntlBuild = require(buildPath);
+        it('has all Intl Format exports', () => {
+            const IntlFormatBuild = require(buildPath);
 
-            Object.keys(ReactIntl).forEach((name) => {
-                expect(ReactIntlBuild[name]).toBeA(typeof ReactIntl[name]);
+            Object.keys(IntlFormat).forEach((name) => {
+                expect(IntlFormatBuild[name]).toBeA(typeof IntlFormat[name]);
             });
         });
     });

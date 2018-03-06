@@ -9,11 +9,6 @@ This source code is licensed under the BSD-style license found in the LICENSE
 file in the root directory of React's source tree.
 */
 
-import invariant from 'invariant';
-import {intlConfigPropTypes} from './types';
-
-const intlConfigPropNames = Object.keys(intlConfigPropTypes);
-
 const ESCAPED_CHARS = {
   '&': '&amp;',
   '>': '&gt;',
@@ -40,64 +35,50 @@ export function filterProps(props, whitelist, defaults = {}) {
   }, {});
 }
 
-export function invariantIntlContext({intl} = {}) {
-  invariant(
-    intl,
-    '[React Intl] Could not find required `intl` object. ' +
-      '<IntlProvider> needs to exist in the component ancestry.'
-  );
-}
+export const intlFormatPropNames = [
+    'formatDate',
+    'formatTime',
+    'formatRelative',
+    'formatNumber',
+    'formatPlural',
+    'formatMessage',
+    'formatHTMLMessage'
+];
 
-export function shallowEquals(objA, objB) {
-  if (objA === objB) {
-    return true;
-  }
+export const dateTimeFormatPropNames = [
+  'localeMatcher',
+  'formatMatcher',
+  'timeZone',
+  'hour12',
+  'weekday',
+  'era',
+  'year',
+  'month',
+  'day',
+  'hour',
+  'minute',
+  'second',
+  'timeZoneName'
+];
 
-  if (
-    typeof objA !== 'object' ||
-    objA === null ||
-    typeof objB !== 'object' ||
-    objB === null
-  ) {
-    return false;
-  }
+export const numberFormatPropNames = [
+  'localeMatcher',
+  'style',
+  'currency',
+  'currencyDisplay',
+  'useGrouping',
+  'minimumIntegerDigits',
+  'minimumFractionDigits',
+  'maximumFractionDigits',
+  'minimumSignificantDigits',
+  'maximumSignificantDigits'
+];
 
-  let keysA = Object.keys(objA);
-  let keysB = Object.keys(objB);
+export const relativeFormatPropNames = [
+  'style',
+  'units'
+];
 
-  if (keysA.length !== keysB.length) {
-    return false;
-  }
-
-  // Test for A's keys different from B.
-  let bHasOwnProperty = Object.prototype.hasOwnProperty.bind(objB);
-  for (let i = 0; i < keysA.length; i++) {
-    if (!bHasOwnProperty(keysA[i]) || objA[keysA[i]] !== objB[keysA[i]]) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-export function shouldIntlComponentUpdate(
-  {props, state, context = {}},
-  nextProps,
-  nextState,
-  nextContext = {}
-) {
-  const {intl = {}} = context;
-  const {intl: nextIntl = {}} = nextContext;
-
-  return (
-    !shallowEquals(nextProps, props) ||
-    !shallowEquals(nextState, state) ||
-    !(
-      nextIntl === intl ||
-      shallowEquals(
-        filterProps(nextIntl, intlConfigPropNames),
-        filterProps(intl, intlConfigPropNames)
-      )
-    )
-  );
-}
+export const pluralFormatPropNames = [
+  'style'
+];

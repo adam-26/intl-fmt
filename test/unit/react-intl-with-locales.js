@@ -1,12 +1,12 @@
 import expect from 'expect';
-import * as ReactIntl from '../../src/react-intl';
-import * as ReactIntlWL from '../../src/index';
+import * as IntlFormat from '../../src/intl-format';
+import * as IntlFormatWL from '../../src/index';
 
-describe('react-intl-with-locales', () => {
+describe('intl-format-with-locales', () => {
     describe('exports', () => {
-        it('has the same exports as "react-intl"', () => {
-            Object.keys(ReactIntl).forEach((namedExport) => {
-                expect(ReactIntlWL[namedExport]).toBe(ReactIntl[namedExport]);
+        it('has the same exports as "intl-format"', () => {
+            Object.keys(IntlFormat).forEach((namedExport) => {
+                expect(IntlFormatWL[namedExport]).toBe(IntlFormat[namedExport]);
             });
         });
     });
