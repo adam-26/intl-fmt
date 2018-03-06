@@ -11,9 +11,6 @@
     "browser": true,
     "jest": true
   },
-  "plugins": [
-    "react"
-  ],
   "rules": {
     "eqeqeq": 2,
     "prefer-arrow-callback": 2,
@@ -27,8 +24,5 @@
     "no-this-before-super": 2,
     "no-unexpected-multiline": 2,
     "no-var": 2,
-
-    "react/jsx-uses-react": 2,
-    "react/jsx-uses-vars": 2,
   }
 }

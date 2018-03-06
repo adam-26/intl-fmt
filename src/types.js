@@ -4,95 +4,148 @@
  * See the accompanying LICENSE file for terms.
  */
 
-import PropTypes from 'prop-types';
+// TODO: Remove unused code.
+// type localeMatcher = 'best fit' | 'lookup';
+// type narrowShortLong = 'narrow' | 'short' | 'long';
+// type numeric2digit = 'numeric' | '2-digit';
 
-const {
-  bool,
-  number,
-  string,
-  func,
-  object,
-  oneOf,
-  shape,
-  any,
-  oneOfType,
-} = PropTypes;
-const localeMatcher = oneOf(['best fit', 'lookup']);
-const narrowShortLong = oneOf(['narrow', 'short', 'long']);
-const numeric2digit = oneOf(['numeric', '2-digit']);
-const funcReq = func.isRequired;
-
-export const intlConfigPropTypes = {
+export type intlConfigPropTypes = {
   locale: string,
-  formats: object,
-  messages: object,
+  formats: Object,
+  messages: Object,
   textComponent: any,
 
   defaultLocale: string,
-  defaultFormats: object,
+  defaultFormats: Object,
 };
 
-export const intlFormatPropTypes = {
-  formatDate: funcReq,
-  formatTime: funcReq,
-  formatRelative: funcReq,
-  formatNumber: funcReq,
-  formatPlural: funcReq,
-  formatMessage: funcReq,
-  formatHTMLMessage: funcReq,
+export type intlFormatOptionsType = {
+    messages?: Object,
+    formats?: Object,
+    defaultLocale?: string,
+    defaultFormats?: Object,
+    textComponent?: string,
+    renderText?: (text: string) => mixed,
+    formatFactories?: Object, //
+    initialNow?: number
 };
 
-export const intlShape = shape({
-  ...intlConfigPropTypes,
-  ...intlFormatPropTypes,
-  formatters: object,
-  now: funcReq,
-});
+export type dateTimeFormatOptions = {
+    localeMatcher: 'best fit' | 'lookup',
+    formatMatcher: 'basic' | 'best fit',
 
-export const messageDescriptorPropTypes = {
-  id: string.isRequired,
-  description: oneOfType([string, object]),
+    timeZone: string,
+    hour12  : boolean,
+
+    weekday     : 'narrow' | 'short' | 'long',
+    era         : 'narrow' | 'short' | 'long',
+    year        : 'numeric' | '2-digit',
+    month       : 'numeric' | '2-digit' | 'narrow' | 'short' | 'long',
+    day         : 'numeric' | '2-digit',
+    hour        : 'numeric' | '2-digit',
+    minute      : 'numeric' | '2-digit',
+    second      : 'numeric' | '2-digit',
+    timeZoneName: 'short' | 'long',
+};
+
+export type relativeFormatOptions = {
+    style?: 'best fit' | 'numeric',
+    units?: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year',
+};
+
+export type numberFormatOptions = {
+    localeMatcher: 'best fit' | 'lookup',
+
+    style: 'decimal' | 'currency' | 'percent',
+
+    currency       : string,
+    currencyDisplay: 'symbol' | 'code' | 'name',
+
+    useGrouping: boolean,
+
+    minimumIntegerDigits    : number,
+    minimumFractionDigits   : number,
+    maximumFractionDigits   : number,
+    minimumSignificantDigits: number,
+    maximumSignificantDigits: number,
+};
+
+export type pluralFormatOptions = {
+    style?: 'cardinal' | 'ordinal',
+};
+
+export type formatMessageType = (messageDescriptor: messageDescriptorType, values?: Object) => mixed;
+export type formatDateType = (value: any, options?: dateTimeFormatOptions & {format?: string}) => string;
+export type formatTimeType = (value: any, options?: dateTimeFormatOptions & {format?: string}) => string;
+export type formatRelativeType = (value: any, options?: relativeFormatOptions & { format?: string, now?: any }) => string;
+export type formatNumberType = (value: any, options?: numberFormatOptions & {format?: string}) => string;
+export type formatPluralType = (value: any, options?: pluralFormatOptions) => 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
+export type changeLocaleType = (locale: string, options?: intlFormatOptionsType) => IntlFormat;
+
+export type IntlFormat = {
+  formatDate: formatDateType,
+  formatTime: formatTimeType,
+  formatRelative: formatRelativeType,
+  formatNumber: formatNumberType,
+  formatPlural: formatPluralType,
+  formatMessage: formatMessageType,
+  formatHTMLMessage: formatMessageType,
+  now: () => number,
+  setNow: (initialNow: number) => void,
+  changeLocale: changeLocaleType
+};
+
+// export type intlShape = { // TODO: DEL?
+//   ...intlConfigPropTypes,
+//   ...IntlFormatType,
+//   formatters: Object,
+//   now: funcReq,
+// };
+
+export type messageDescriptorType = {
+  id: string,
   defaultMessage: string,
+  description?: string | Object
 };
 
-export const dateTimeFormatPropTypes = {
-  localeMatcher,
-  formatMatcher: oneOf(['basic', 'best fit']),
-
-  timeZone: string,
-  hour12: bool,
-
-  weekday: narrowShortLong,
-  era: narrowShortLong,
-  year: numeric2digit,
-  month: oneOf(['numeric', '2-digit', 'narrow', 'short', 'long']),
-  day: numeric2digit,
-  hour: numeric2digit,
-  minute: numeric2digit,
-  second: numeric2digit,
-  timeZoneName: oneOf(['short', 'long']),
-};
-
-export const numberFormatPropTypes = {
-  localeMatcher,
-
-  style: oneOf(['decimal', 'currency', 'percent']),
-  currency: string,
-  currencyDisplay: oneOf(['symbol', 'code', 'name']),
-  useGrouping: bool,
-
-  minimumIntegerDigits: number,
-  minimumFractionDigits: number,
-  maximumFractionDigits: number,
-  minimumSignificantDigits: number,
-  maximumSignificantDigits: number,
-};
-
-export const relativeFormatPropTypes = {
-  style: oneOf(['best fit', 'numeric']),
-  units: oneOf(['second', 'minute', 'hour', 'day', 'month', 'year']),
-};
-
-export const pluralFormatPropTypes = {
-  style: oneOf(['cardinal', 'ordinal']),
-};
+// export type dateTimeFormatPropTypes = {
+//   localeMatcher: localeMatcher,
+//   formatMatcher: 'basic' | 'best fit',
+//
+//   timeZone: string,
+//   hour12: boolean,
+//
+//   weekday: narrowShortLong,
+//   era: narrowShortLong,
+//   year: numeric2digit,
+//   month: 'numeric' | '2-digit' | 'narrow' | 'short' | 'long',
+//   day: numeric2digit,
+//   hour: numeric2digit,
+//   minute: numeric2digit,
+//   second: numeric2digit,
+//   timeZoneName: 'short' | 'long',
+// };
+//
+// export type numberFormatPropTypes = {
+//   localeMatcher: localeMatcher,
+//
+//   style: 'decimal' | 'currency' | 'percent',
+//   currency: string,
+//   currencyDisplay: 'symbol' | 'code' | 'name',
+//   useGrouping: boolean,
+//
+//   minimumIntegerDigits: number,
+//   minimumFractionDigits: number,
+//   maximumFractionDigits: number,
+//   minimumSignificantDigits: number,
+//   maximumSignificantDigits: number,
+// };
+//
+// export type relativeFormatPropTypes = {
+//   style: 'best fit' | 'numeric',
+//   units: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year',
+// };
+//
+// export type pluralFormatPropTypes = {
+//   style: 'cardinal' | 'ordinal'
+// };

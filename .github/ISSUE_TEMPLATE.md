@@ -4,7 +4,7 @@
 <!--
 If this is a BUG REPORT, please:
 
-  - Before file an issue, please verify it is a bug for react-intl not **intl.js polyfill** and **Unicode CLDR**.
+  - Before file an issue, please verify it is a bug for intl-format not **intl.js polyfill** and **Unicode CLDR**.
   - Fill in as much of the template below as you can. If you leave out information, we can't help you as well.
 
 If this is a FEATURE REQUEST, please:
@@ -33,8 +33,7 @@ For example:
 
 | Executable | Version |
 | ---: | :--- |
-| `npm ls react-intl` | VERSION |
-| `npm ls react` | VERSION |
+| `npm ls intl-format` | VERSION |
 | `npm --version` | VERSION |
 | `node --version` | VERSION |
 

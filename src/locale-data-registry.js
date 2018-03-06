@@ -4,8 +4,8 @@
  * See the accompanying LICENSE file for terms.
  */
 
-import IntlMessageFormat from 'intl-messageformat';
-import IntlRelativeFormat from 'intl-relativeformat';
+import IntlMessageFormat from 'tag-messageformat';
+import IntlRelativeFormat from 'tag-relativeformat';
 
 export function addLocaleData(data = []) {
   let locales = Array.isArray(data) ? data : [data];
