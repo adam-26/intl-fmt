@@ -1,18 +1,18 @@
-Intl Format
+Intl Fmt
 ==========
 
 This library provides an API to format dates, numbers, strings, and pluralization using ICU message format supporting tags.
 
-[![npm](https://img.shields.io/npm/v/intl-format.svg)](https://www.npmjs.com/package/intl-format)
-[![npm](https://img.shields.io/npm/dm/intl-format.svg)](https://www.npmjs.com/package/intl-format)
+[![npm](https://img.shields.io/npm/v/intl-fmt.svg)](https://www.npmjs.com/package/intl-fmt)
+[![npm](https://img.shields.io/npm/dm/intl-fmt.svg)](https://www.npmjs.com/package/intl-fmt)
 [![CircleCI branch](https://img.shields.io/circleci/project/github/adam-26/intl-format/master.svg)](https://circleci.com/gh/adam-26/intl-format/tree/master)
 [![Maintainability](https://api.codeclimate.com/v1/badges/ba110ff64db325dd9e65/maintainability)](https://codeclimate.com/github/adam-26/intl-format/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/ba110ff64db325dd9e65/test_coverage)](https://codeclimate.com/github/adam-26/intl-format/test_coverage)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
-> This is a fork of [intl-messageformat](https://github.com/yahoo/intl-messageformat).
+> This is a fork of [react-intl](https://github.com/yahoo/react-intl).
 
-> It uses the same well tested code to expose an internationalization API _without any React dependencies_
+> It uses the same well tested code to expose an internationalization API **without any React dependencies**
 
 ### Features
 
@@ -30,7 +30,7 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 > **Tags are not part of the ICU message standard**.
 
 _Differences_ from the original package include:
- * **No React dependency** - want to use `Tags` with React? See [react-intl-format](), a drop-in replacement for [react-intl](https://github.com/yahoo/intl-messageformat)
+ * **No React dependency** - want to use `Tags` with React? See [react-intl-fmt](https://github.com/adam-26/react-intl-format), a drop-in replacement for [react-intl](https://github.com/yahoo/react-intl)
  * As well as supporting ICU messages, this package also supports the use of `tags` in translations. [Whats a tag?](#whatsatag)
 
 ### Whats a Tag?
@@ -41,7 +41,7 @@ style information in the translation message. Named tags can be used to provide 
 Tags can be used in combination with all ICU message features. Heres a quick example:
 
 ```js
-import IntlFmt from 'intl-format';
+import IntlFmt from 'intl-fmt';
 
 const fmt = new IntlFmt();
 const msgDescriptor = {
@@ -61,9 +61,9 @@ console.log(formattedMsg); // Agree to our <a href='#'>terms and conditions</a>?
 Overview
 --------
 
-**Intl Format uses packages that are forked form [FormatJS](https://formatjs.io/).**
+**Intl Fmt uses packages that are forked form [FormatJS](https://formatjs.io/).**
 
-Intl Format extends the FormatJS packages to include support for `tags`.
+Intl Fmt extends the FormatJS packages to include support for `tags`.
 
 ### Original Documentation
 
@@ -76,10 +76,10 @@ See the original documentation for more detailed API information.
 
 ### Usage
 
-You must create an _instance_ of `IntlFormat`.
+You must create an _instance_ of `IntlFmt`.
 
 ```js
-import IntlFmt from 'intl-format';
+import IntlFmt from 'intl-fmt';
 import englishMessages from './translations/en/json';
 
 const locale = 'en';
@@ -92,8 +92,8 @@ const fmt = new IntlFmt(locale, fmtOpts);
 ```
 
 ### Package Exports
- * `default`: IntlFormat - the main class used for formatting localized values
- * `Formatter`: IntlFormat - a named instance of the `default` export, to make browser usage easier
+ * `default`: IntlFormatter - the main class used for formatting localized values
+ * `Formatter`: IntlFormatter - a named instance of the `default` export, to make browser usage easier
  * `addLocaleData: function`: Used to add additional locale data into the current environment
  * `defineMessages: function`: A utility method for provide a hook to babel plugins to messages at build time
 
@@ -102,37 +102,37 @@ const fmt = new IntlFmt(locale, fmtOpts);
 
 You _may_ need to [polyfill NodeJS](https://formatjs.io/guides/runtime-environments/#server) or
 [polyfill the browser](https://formatjs.io/guides/runtime-environments/#client) environment for
-intl-format to work correctly.
+intl-fmt to work correctly.
 
-To use _intl-format_ you'll likely need to [load locale data into your Node or browser environment](https://github.com/yahoo/react-intl/wiki#loading-locale-data).
+To use _intl-fmt_ you'll likely need to [load locale data into your Node or browser environment](https://github.com/yahoo/react-intl/wiki#loading-locale-data).
 I recommend reading [the original documentation for configuring your environment]() and use that as a reference for the example below.
 
-As you can see below, loading locale data is the same as before - you just import from `intl-format` instead of `react-intl`.
+As you can see below, loading locale data is the same as before - you just import from `intl-fmt` instead of `react-intl`.
 
 ```js
 // app.js
-import {addLocaleData} from 'intl-format';
-import en from 'intl-format/locale-data/en';
-import fr from 'intl-format/locale-data/fr';
-import es from 'intl-format/locale-data/es';
+import {addLocaleData} from 'intl-fmt';
+import en from 'intl-fmt/locale-data/en';
+import fr from 'intl-fmt/locale-data/fr';
+import es from 'intl-fmt/locale-data/es';
 
 addLocaleData([...en, ...fr, ...es]);
 // ...
 ```
 
 Currently, **importing from a CDN is NOT supported**
-_If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-format/issues/new) that publishes releases as part of the build process_
+_If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fmt/issues/new) that publishes releases as part of the build process_
 ```js
 // This is NOT CURRENTLY SUPPORTED
 <!-- Load ReactIntl and its locale data for French. -->
-<script src="https://unpkg.com/intl-format@latest/dist/intl-format.min.js"></script>
-<script src="https://unpkg.com/intl-format@latest/locale-data/fr.js"></script>
+<script src="https://unpkg.com/intl-fmt@latest/dist/intl-format.min.js"></script>
+<script src="https://unpkg.com/intl-fmt@latest/locale-data/fr.js"></script>
 <script>
     IntlFormat.addLocaleData(IntlFormatLocaleData.fr);
 </script>
 ```
 
-### IntlFormat API
+### Intl Formatter API
 
 ### Constructor `new IntlFmt(locale?: string, options: IntlFormatOptions): IntlFmt`
 
@@ -208,7 +208,7 @@ Using **descriptive names** for tag names can provide hints to translators about
 The following example uses a `{name}` argument in a tag.
 
 ```js
-import IntlFmt from 'intl-format';
+import IntlFmt from 'intl-fmt';
 
 const fmt = new IntlFmt();
 const msgDescriptor = {
