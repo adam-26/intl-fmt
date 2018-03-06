@@ -1,9 +1,6 @@
 Intl Format
 ==========
 
-// TODO: Update dependency VERSIONS (Inc; relative, check CACHE pkg dependencies?)
-// TODO: Must add 'RAW' formatter to ?tag-messageformat? to support usage with REACT for TAGS ??? Test before implementing.
-
 This library provides an API to format dates, numbers, strings, and pluralization using ICU message format supporting tags.
 
 [![npm](https://img.shields.io/npm/v/intl-format.svg)](https://www.npmjs.com/package/intl-format)
@@ -145,7 +142,7 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fo
    * `defaultLocale: string` - the formatters default locale, defaults to `en`
    * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
    * `formats: Object` - custom formats, defaults to `{}`
-   * `messages: { [key]: message }` - translated messages for the specified locale(s)
+   * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
    * `textComponent: string` - A tag name that will be used to surround all rendered text. ie; `span` will result in all `message()` text being rendered in `<span>msg</span>` tags.
    * `textRenderer: (text) => string` - A function that can be used to customize all `message()` output.

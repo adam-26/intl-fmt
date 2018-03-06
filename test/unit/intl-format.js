@@ -11,7 +11,7 @@ describe('intl-format', () => {
             expect(IntlFormat.defineMessages).toBeA('function');
         });
 
-        it('exports `injectIntl`', () => {
+        it('exports `Formatter`', () => {
             expect(IntlFormat.Formatter).toBeA('function');
         });
     });
