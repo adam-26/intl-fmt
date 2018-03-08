@@ -4752,23 +4752,17 @@ tag-messageformat-parser@2.1.0, tag-messageformat-parser@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tag-messageformat-parser/-/tag-messageformat-parser-2.1.0.tgz#3fee5b774c64e39ef1a3c7dfb3e551057a01b1d9"
 
-tag-messageformat@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/tag-messageformat/-/tag-messageformat-3.1.1.tgz#57f9844a6cd5527bca00c6c511b6426916d1c0ef"
+tag-messageformat@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/tag-messageformat/-/tag-messageformat-3.2.0.tgz#2b6b8276164a478aa3e8824d3e30ee54d8548366"
   dependencies:
     tag-messageformat-parser "2.1.0"
 
-tag-messageformat@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/tag-messageformat/-/tag-messageformat-3.1.2.tgz#7c466a0e2e07eab90ae19e46d78073d86df795f5"
+tag-relativeformat@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/tag-relativeformat/-/tag-relativeformat-3.0.1.tgz#aa8a16d3577eb092e722dad43e74e2c372da14a4"
   dependencies:
-    tag-messageformat-parser "2.1.0"
-
-tag-relativeformat@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/tag-relativeformat/-/tag-relativeformat-3.0.0.tgz#660e168116564d9ea9dd1ab7904b299bc942f5f9"
-  dependencies:
-    tag-messageformat "^3.1.2"
+    tag-messageformat "^3.2.0"
 
 tar-pack@~3.3.0:
   version "3.3.0"

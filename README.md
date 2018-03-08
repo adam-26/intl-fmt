@@ -14,6 +14,11 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 > It uses the same well tested code to expose an internationalization API **without any React dependencies**
 
+> The only _breaking change_ is that whitespace inside **plural** ICU messages is now preserved. This may impact your existing translations.
+
+> You _may_ need to set the `requireOther: false` option for backward compatibility if your ICU complex messages are missing the _other_ option.
+
+
 ### Features
 
 - Display numbers with separators.
@@ -96,7 +101,8 @@ const fmt = new IntlFmt(locale, fmtOpts);
  * `Formatter`: IntlFormatter - a named instance of the `default` export, to make browser usage easier
  * `addLocaleData: function`: Used to add additional locale data into the current environment
  * `defineMessages: function`: A utility method for provide a hook to babel plugins to messages at build time
-
+ * `StringBuilderFactory`: The default factory method used to format `message` strings
+ * `ArrayBuilderFactory`: An alternative factory method that can be used to return formatted `message` strings as arrays
 
 ### Locale Data
 
@@ -144,8 +150,11 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
    * `formats: Object` - custom formats, defaults to `{}`
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
-   * `textComponent: string` - A tag name that will be used to surround all rendered text. ie; `span` will result in all `message()` text being rendered in `<span>msg</span>` tags.
-   * `textRenderer: (text) => string` - A function that can be used to customize all `message()` output.
+   * `messageBuilderFactory`: The factory used to format `message` output
+   * `defaultHtmlElementName: string` - A tag name that will be used to surround all formatted output. ie; `span` will result in all formatted values being rendered in `<span>msg</span>` tags.
+   * `defaultRenderMethod: (text) => string` - A function that can be used to customize all formatted output. The `defaultRenderMethod` takes precedence over the `defaultHtmlElementName` if both are defined.
+   * `htmlElements: { [formatterName]: string }`: An object of key/value pairs that define a html element to wrap specific formatter method output
+   * `renderMethods: { [formatterName]: string }`: An object of key/value pairs that define a render method to wrap specific formatter method output. `renderMethods` take precedence over `htmlElements` if both are defined for the same formatter.
 
 #### `locale(): string`
 Returns the current locale.
@@ -156,7 +165,7 @@ Returns the value being used to represent `now`.
 #### `setNow(now?: number): void`
 Sets the value used to represent `now`.
 
-#### `message(msgDescriptor: MessageDescriptor, values?: Object): string`
+#### `message(msgDescriptor: MessageDescriptor, values?: Object, messageBuilderFactory?: MessageBuilderFactory): string`
 Formats a message descriptor using the optionally assigned values.
 
 #### `htmlMessage(msgDescriptor: MessageDescriptor, values?: Object): string`
@@ -226,7 +235,7 @@ console.log(formattedMsg); // Welcome back <span class="boldText">Bob</span>
 
 Contribute
 ---------
-Check out the [Contributing document][CONTRIBUTING] for the details. Thanks!
+Check out the [Contributing document](https://github.com/adam-26/intl-format/blob/master/CONTRIBUTING.md) for the details. Thanks!
 
 For bugs or issues, please open an issue, and you're welcome to submit a PR for bug fixes and feature requests.
 
@@ -236,4 +245,4 @@ License
 -------
 
 This software is free to use under the Yahoo Inc. BSD license.
-See the [LICENSE file][] for license text and copyright information.
+See the [LICENSE file](https://github.com/adam-26/intl-format/blob/master/LICENSE.md) for license text and copyright information.

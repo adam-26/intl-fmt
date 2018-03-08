@@ -23,12 +23,6 @@ export function setProd(isProd) {
   IS_PROD = isProd;
 }
 
-// TODO: Remove unused code
-// const dateTimeFormatPropNames = Object.keys(dateTimeFormatPropTypes);
-// const numberFormatPropNames = Object.keys(numberFormatPropTypes);
-// const relativeFormatPropNames = Object.keys(relativeFormatPropTypes);
-// const pluralFormatPropNames = Object.keys(pluralFormatPropTypes);
-
 const RELATIVE_FORMAT_THRESHOLDS = {
   second: 60, // seconds to minute
   minute: 60, // minutes to hour
@@ -181,7 +175,8 @@ export function formatMessage(
   config,
   state,
   messageDescriptor = {},
-  values = {}
+  values = {},
+  messageBuilderFactory
 ) {
   const {locale, formats, messages, defaultLocale, defaultFormats, requireOther} = config;
 
@@ -205,7 +200,7 @@ export function formatMessage(
     try {
       let formatter = state.getMessageFormat(message, locale, formats, { requireOther: requireOther });
 
-      formattedMessage = formatter.format(values);
+      formattedMessage = formatter.format(values, messageBuilderFactory);
     } catch (e) {
       if (!IS_PROD) {
         console.error(
@@ -241,7 +236,7 @@ export function formatMessage(
         { requireOther: requireOther }
       );
 
-      formattedMessage = formatter.format(values);
+      formattedMessage = formatter.format(values, messageBuilderFactory);
     } catch (e) {
       if (!IS_PROD) {
         console.error(
