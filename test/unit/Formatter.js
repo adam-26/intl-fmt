@@ -1,13 +1,9 @@
-// import expect, {createSpy, spyOn} from 'expect';
-import IntlMessageFormat from 'tag-messageformat';
+import IntlMessageFormat, {ArrayBuilderFactory} from 'tag-messageformat';
 import IntlRelativeFormat from 'tag-relativeformat';
 import IntlPluralFormat from '../../src/plural';
-// import {intlFormatPropNames} from "../../src/utils";
 import Formatter from '../../src/Formatter';
 
 describe('Formatter', () => {
-    // const IS_PROD = process.env.NODE_ENV === 'production';
-
     let config;
 
     beforeEach(() => {
@@ -80,6 +76,22 @@ describe('Formatter', () => {
             expect(() => new Formatter('en', { textRenderer: 0 }))
                 .toThrow(/expects the `textRenderer` option to be a function/);
         });
+
+        it('should throw if defaultRenderMethod is not a function', () => {
+            expect(() => new Formatter('en', { defaultRenderMethod: 0 }))
+                .toThrow(/expects the `defaultRenderMethod` option to be a function/);
+        });
+    });
+
+    describe('get options()', () => {
+        it('should return formatter options', () => {
+            const opts = {
+                formats: {},
+                messages: {}
+            };
+            const fmt = new Formatter('af', opts);
+            expect(Object.keys(fmt.options)).toHaveLength(14);
+        });
     });
 
     describe('changeLocale', () => {
@@ -109,14 +121,14 @@ describe('Formatter', () => {
             expect(newFmt._config.requireOther).toEqual(fmt._config.requireOther);
         });
 
-        it('should set same textComponent value', () => {
+        it('should set same defaultHtmlElementName value', () => {
             const newFmt = fmt.changeLocale('en');
-            expect(newFmt._config.textComponent).toEqual(fmt._config.textComponent);
+            expect(newFmt._config.defaultHtmlElementName).toEqual(fmt._config.defaultHtmlElementName);
         });
 
-        it('should set same textRenderer value', () => {
+        it('should set same defaultRenderMethod value', () => {
             const newFmt = fmt.changeLocale('en');
-            expect(newFmt._config.textRenderer).toEqual(fmt._config.textRenderer);
+            expect(newFmt._config.defaultRenderMethod).toEqual(fmt._config.defaultRenderMethod);
         });
 
         it('should assign current messages if no new messages assigned', () => {
@@ -147,6 +159,15 @@ describe('Formatter', () => {
             const currentNow = fmt.now();
             setTimeout(() => {
                 fmt.setNow();
+                expect(currentNow).not.toBe(fmt.now());
+                done();
+            }, 500);
+        });
+
+        it('should return real now', (done) => {
+            fmt.setNow();
+            const currentNow = fmt.now();
+            setTimeout(() => {
                 expect(currentNow).not.toBe(fmt.now());
                 done();
             }, 500);
@@ -229,7 +250,6 @@ describe('Formatter', () => {
 
                 const {locale, formats} = config;
                 rf = new IntlRelativeFormat(locale, formats.relative[format]);
-
                 expect(fmt.relative(date, {format})).toBe(rf.format(date, {now}));
             });
         });
@@ -291,20 +311,51 @@ describe('Formatter', () => {
                 expect(fmt.message({id: 'with_arg'}, values)).toBe(mf.format(values));
             });
 
-            it('formats a message using custom textRenderer', () => {
+            it('formats a message using custom `defaultRenderMethod`', () => {
                 const {locale, ...opts } = config;
                 const renderFn = jest.fn((txt) => `!${txt}!`);
-                fmt = new Formatter(locale, {...opts, textRenderer: renderFn });
+                fmt = new Formatter(locale, {...opts, defaultRenderMethod: renderFn });
 
                 expect(fmt.message({id: 'no_args'})).toBe(`!${opts.messages.no_args}!`);
                 expect(renderFn.mock.calls).toHaveLength(1);
             });
 
-            it('formats a message using custom textComponent', () => {
+            it('formats a message using custom `defaultHtmlElementName`', () => {
                 const {locale, ...opts } = config;
-                fmt = new Formatter(locale, {...opts, textComponent: 'span' });
+                fmt = new Formatter(locale, {...opts, defaultHtmlElementName: 'span' });
 
                 expect(fmt.message({id: 'no_args'})).toBe(`<span>${opts.messages.no_args}</span>`);
+            });
+
+            it('formats a message using custom `renderMethods.message`', () => {
+                const {locale, ...opts } = config;
+                const renderFn = jest.fn((txt) => `!${txt}!`);
+                fmt = new Formatter(locale, {...opts, renderMethods: { message: renderFn } });
+
+                expect(fmt.message({id: 'no_args'})).toBe(`!${opts.messages.no_args}!`);
+                expect(renderFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a message using custom `htmlElements.message`', () => {
+                const {locale, ...opts } = config;
+                fmt = new Formatter(locale, {...opts, htmlElements: { message: 'span' } });
+
+                expect(fmt.message({id: 'no_args'})).toBe(`<span>${opts.messages.no_args}</span>`);
+            });
+
+            it('formats a message using default ArrayBuilderFactory', () => {
+                const {locale, ...opts} = config;
+                fmt = new Formatter(locale, {...opts, messageBuilderFactory: ArrayBuilderFactory });
+                const mf = new IntlMessageFormat(opts.messages.no_args, locale);
+
+                expect(fmt.message({id: 'no_args'})).toEqual(mf.format({}, ArrayBuilderFactory));
+            });
+
+            it('formats a message using method ArrayBuilderFactory', () => {
+                const {locale, messages} = config;
+                const mf = new IntlMessageFormat(messages.no_args, locale);
+
+                expect(fmt.message({id: 'no_args'}, {}, ArrayBuilderFactory)).toEqual(mf.format({}, ArrayBuilderFactory));
             });
         });
 
@@ -323,6 +374,210 @@ describe('Formatter', () => {
                 const escapedValues = {name: '&lt;i&gt;Eric&lt;/i&gt;'};
 
                 expect(fmt.htmlMessage({id: 'with_html'}, values)).toBe(mf.format(escapedValues));
+            });
+        });
+
+        describe('`defaultRenderMethod` option', () => {
+            let renderMethodFn;
+
+            beforeEach(() => {
+                renderMethodFn = jest.fn((txt) => `!${txt}!`);
+                const { locale, ...formatterOpts } = config;
+                fmt = new Formatter(locale, {...formatterOpts,
+                    defaultRenderMethod: renderMethodFn
+                });
+            });
+
+            it('formats a message', () => {
+                expect(fmt.message({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a htmlMessage', () => {
+                expect(fmt.htmlMessage({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a date', () => {
+                const df = new Intl.DateTimeFormat(config.locale);
+                const now = new Date().getTime();
+
+                expect(fmt.date(now)).toBe(`!${df.format(now)}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a time', () => {
+                const df = new Intl.DateTimeFormat(config.locale, {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                });
+                const now = new Date().getTime();
+
+                expect(fmt.time(now)).toBe(`!${df.format(now)}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a relative value', () => {
+                const now = new Date().getTime();
+                expect(fmt.relative(now)).toBe(`!now!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a number', () => {
+                expect(fmt.number(1)).toBe(`!1!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+        });
+
+        describe('`renderMethods.*` options', () => {
+            let renderMethodFn;
+
+            beforeEach(() => {
+                renderMethodFn = jest.fn((txt) => `!${txt}!`);
+                const { locale, ...formatterOpts } = config;
+                fmt = new Formatter(locale, {...formatterOpts,
+                    renderMethods: {
+                        message: renderMethodFn,
+                        htmlMessage: renderMethodFn,
+                        date: renderMethodFn,
+                        time: renderMethodFn,
+                        number: renderMethodFn,
+                        relative: renderMethodFn,
+                    }
+                });
+            });
+
+            it('formats a message', () => {
+                expect(fmt.message({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a htmlMessage', () => {
+                expect(fmt.htmlMessage({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a date', () => {
+                const df = new Intl.DateTimeFormat(config.locale);
+                const now = new Date().getTime();
+
+                expect(fmt.date(now)).toBe(`!${df.format(now)}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a time', () => {
+                const df = new Intl.DateTimeFormat(config.locale, {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                });
+                const now = new Date().getTime();
+
+                expect(fmt.time(now)).toBe(`!${df.format(now)}!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a relative value', () => {
+                const now = new Date().getTime();
+                expect(fmt.relative(now)).toBe(`!now!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a number', () => {
+                expect(fmt.number(1)).toBe(`!1!`);
+                expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+        });
+
+        describe('`defaultHtmlElementName` option', () => {
+            beforeEach(() => {
+                const { locale, ...formatterOpts } = config;
+                fmt = new Formatter(locale, {...formatterOpts,
+                    defaultHtmlElementName: 'span'
+                });
+            });
+
+            it('formats a message', () => {
+                expect(fmt.message({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
+            });
+
+            it('formats a htmlMessage', () => {
+                expect(fmt.htmlMessage({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
+            });
+
+            it('formats a date', () => {
+                const df = new Intl.DateTimeFormat(config.locale);
+                const now = new Date().getTime();
+
+                expect(fmt.date(now)).toBe(`<span>${df.format(now)}</span>`);
+            });
+
+            it('formats a time', () => {
+                const df = new Intl.DateTimeFormat(config.locale, {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                });
+                const now = new Date().getTime();
+
+                expect(fmt.time(now)).toBe(`<span>${df.format(now)}</span>`);
+            });
+
+            it('formats a relative value', () => {
+                const now = new Date().getTime();
+                expect(fmt.relative(now)).toBe(`<span>now</span>`);
+            });
+
+            it('formats a number', () => {
+                expect(fmt.number(1)).toBe(`<span>1</span>`);
+            });
+        });
+
+        describe('`htmlElements.*` options', () => {
+            beforeEach(() => {
+                const { locale, ...formatterOpts } = config;
+                fmt = new Formatter(locale, {...formatterOpts,
+                    htmlElements: {
+                        message: 'span',
+                        htmlMessage: 'span',
+                        date: 'span',
+                        time: 'span',
+                        number: 'span',
+                        relative: 'span',
+                    }
+                });
+            });
+
+            it('formats a message', () => {
+                expect(fmt.message({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
+            });
+
+            it('formats a htmlMessage', () => {
+                expect(fmt.htmlMessage({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
+            });
+
+            it('formats a date', () => {
+                const df = new Intl.DateTimeFormat(config.locale);
+                const now = new Date().getTime();
+
+                expect(fmt.date(now)).toBe(`<span>${df.format(now)}</span>`);
+            });
+
+            it('formats a time', () => {
+                const df = new Intl.DateTimeFormat(config.locale, {
+                    hour: 'numeric',
+                    minute: 'numeric',
+                });
+                const now = new Date().getTime();
+
+                expect(fmt.time(now)).toBe(`<span>${df.format(now)}</span>`);
+            });
+
+            it('formats a relative value', () => {
+                const now = new Date().getTime();
+                expect(fmt.relative(now)).toBe(`<span>now</span>`);
+            });
+
+            it('formats a number', () => {
+                expect(fmt.number(1)).toBe(`<span>1</span>`);
             });
         });
     });

@@ -35,6 +35,16 @@ export function filterProps(props, whitelist, defaults = {}) {
   }, {});
 }
 
+export const shortIntlFuncNames = [
+    'date',
+    'time',
+    'relative',
+    'number',
+    'plural',
+    'message',
+    'htmlMessage'
+];
+
 export const intlFormatPropNames = [
     'formatDate',
     'formatTime',

@@ -4,19 +4,21 @@
  * See the accompanying LICENSE file for terms.
  */
 
-// TODO: Remove unused code.
-// type localeMatcher = 'best fit' | 'lookup';
-// type narrowShortLong = 'narrow' | 'short' | 'long';
-// type numeric2digit = 'numeric' | '2-digit';
+export type messageBuilderType = {
+    appendText: (msg: mixed) => void,
+    appendSimpleMessage: (msg: mixed) => void,
+    appendFormattedMessage: (msg: mixed) => void,
+    appendTag: (msg: mixed) => void,
+    build: () => mixed;
+};
 
-export type intlConfigPropTypes = {
-  locale: string,
-  formats: Object,
-  messages: Object,
-  textComponent: any,
-
-  defaultLocale: string,
-  defaultFormats: Object,
+export type nestedRenderOptionsType = {
+    message?: string,
+    htmlMessage?: string,
+    date?: string,
+    time?: string,
+    number?: string,
+    relative?: string,
 };
 
 export type intlFormatOptionsType = {
@@ -24,10 +26,20 @@ export type intlFormatOptionsType = {
     formats?: Object,
     defaultLocale?: string,
     defaultFormats?: Object,
+    requireOther: true,
+    formatFactories?: Object,
+    initialNow?: number | () => number,
+    messageBuilderFactory: () => messageBuilderType,
+
+    // render opts
+    defaultComponent?: string,
+    defaultRenderer?: (text: string) => mixed,
+    htmlElements?: nestedRenderOptionsType,
+    renderMethods?: nestedRenderOptionsType,
+
+    // Deprecated
+    textRenderer?: (text: string) => mixed,
     textComponent?: string,
-    renderText?: (text: string) => mixed,
-    formatFactories?: Object, //
-    initialNow?: number
 };
 
 export type dateTimeFormatOptions = {
@@ -74,7 +86,7 @@ export type pluralFormatOptions = {
     style?: 'cardinal' | 'ordinal',
 };
 
-export type formatMessageType = (messageDescriptor: messageDescriptorType, values?: Object) => mixed;
+export type formatMessageType = (messageDescriptor: messageDescriptorType, values?: Object, msgBuilderFactory?: () => messageBuilderType) => mixed;
 export type formatDateType = (value: any, options?: dateTimeFormatOptions & {format?: string}) => string;
 export type formatTimeType = (value: any, options?: dateTimeFormatOptions & {format?: string}) => string;
 export type formatRelativeType = (value: any, options?: relativeFormatOptions & { format?: string, now?: any }) => string;
@@ -95,57 +107,8 @@ export type IntlFormat = {
   changeLocale: changeLocaleType
 };
 
-// export type intlShape = { // TODO: DEL?
-//   ...intlConfigPropTypes,
-//   ...IntlFormatType,
-//   formatters: Object,
-//   now: funcReq,
-// };
-
 export type messageDescriptorType = {
   id: string,
   defaultMessage: string,
   description?: string | Object
 };
-
-// export type dateTimeFormatPropTypes = {
-//   localeMatcher: localeMatcher,
-//   formatMatcher: 'basic' | 'best fit',
-//
-//   timeZone: string,
-//   hour12: boolean,
-//
-//   weekday: narrowShortLong,
-//   era: narrowShortLong,
-//   year: numeric2digit,
-//   month: 'numeric' | '2-digit' | 'narrow' | 'short' | 'long',
-//   day: numeric2digit,
-//   hour: numeric2digit,
-//   minute: numeric2digit,
-//   second: numeric2digit,
-//   timeZoneName: 'short' | 'long',
-// };
-//
-// export type numberFormatPropTypes = {
-//   localeMatcher: localeMatcher,
-//
-//   style: 'decimal' | 'currency' | 'percent',
-//   currency: string,
-//   currencyDisplay: 'symbol' | 'code' | 'name',
-//   useGrouping: boolean,
-//
-//   minimumIntegerDigits: number,
-//   minimumFractionDigits: number,
-//   maximumFractionDigits: number,
-//   minimumSignificantDigits: number,
-//   maximumSignificantDigits: number,
-// };
-//
-// export type relativeFormatPropTypes = {
-//   style: 'best fit' | 'numeric',
-//   units: 'second' | 'minute' | 'hour' | 'day' | 'month' | 'year',
-// };
-//
-// export type pluralFormatPropTypes = {
-//   style: 'cardinal' | 'ordinal'
-// };

@@ -5,14 +5,16 @@
  */
 
 import allLocaleData from '../locale-data/index';
-import { Formatter, addLocaleData, defineMessages } from './intl-format';
+import { Formatter, addLocaleData, defineMessages, StringBuilderFactory, ArrayBuilderFactory } from './intl-format';
 
 export {
     addLocaleData,
     defineMessages,
-    Formatter
+    Formatter,
+    StringBuilderFactory,
+    ArrayBuilderFactory
 };
 
-export default Formatter; // TODO: How to export a default in the browser w/out rediculous names?
+export default Formatter;
 
 addLocaleData(allLocaleData);
