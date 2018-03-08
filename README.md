@@ -207,10 +207,10 @@ Returns the value being used to represent `now`.
 #### `setNow(now?: number): void`
 Sets the value used to represent `now`.
 
-#### `message(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): string`
+#### `message(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
 Formats a message descriptor using the optionally assigned values.
 
-#### `htmlMessage(msgDescriptor: MessageDescriptor, values?: Object): string`
+#### `htmlMessage(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
 Formats a HTML message descriptor using the optionally assigned values.
 _This exists for backwards compatibility only_. Using this method is **not recommended**., use `message()` instead.
 
@@ -229,6 +229,27 @@ Formats a relative time for the current locale, ie: `3 hours ago`.
 #### `plural(value: any, options?: PluralFormatOptions): string`
 Returns a value indicating the plurality of the value.
 The return value will be one of `zero, one, two, few, many, other`
+
+#### `messageComponent(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
+Formats a message descriptor as a component.
+
+#### `htmlMessageComponent(msgDescriptor: MessageDescriptor, values?: Object, options?: htmlMessageOptions): mixed`
+Formats a HTML message descriptor as a component.
+
+_This exists for backwards compatibility only_. Using this method is **not recommended**, use `messageComponent()` instead.
+
+#### `dateComponent(value: any, options?: DateTimeComponentOptions): mixed`
+Formats a date for the current locale as a component.
+
+#### `timeComponent(value: any, options?: DateTimeComponentOptions): mixed`
+Formats a time for the current locale as a component.
+
+#### `numberComponent(value: any, options?: NumberComponentOptions): mixed`
+Formats a number for the current locale.
+
+#### `relativeComponent(value: any, options?: RelativeComponentOptions): mixed`
+Formats a relative time for the current locale as a component, ie: `<span>3 hours ago</span>`.
+
 
 #### `changeLocale(locale: string, options?: intlFormatOptionsType = {}): IntlFmt`
 Returns a new `IntlFmt` instance, applying the defined locale and options.

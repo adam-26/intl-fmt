@@ -244,15 +244,21 @@ export default class Formatter {
         this._formatters = bindFormatters(this._config, this._formatterState)
     }
 
-    _component(fnName: string, value: string, options?: componentOptions): string {
-        const { component } = options;
-        const render = component || this._components[fnName];
+    formatComponent(fnName: string, value: mixed, options?: componentOptions): mixed {
+        const { component, ...opts } = options;
+        return this.renderComponent(
+            component || this._components[fnName],
+            value,
+            { ...opts, formatterName: fnName });
+    }
 
-        if (typeof render === 'string') {
-            return `<${render}>${value}</${render}>`;
+    // eslint-disable-next-line no-unused-vars
+    renderComponent(component: mixed, value: mixed, opts?: Object): mixed {
+        if (typeof component === 'string') {
+            return `<${component}>${value}</${component}>`;
         }
 
-        return render(value);
+        return component(value);
     }
 
     get options() {
@@ -317,7 +323,7 @@ export default class Formatter {
     relative(value: any, options?: relativeOptions = {}): string {
         return this._formatters.formatRelative(value, options);
     }
-    
+
     plural(value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
         return this._formatters.formatPlural(value, options);
     }
@@ -329,7 +335,7 @@ export default class Formatter {
     ): mixed
     {
         const { messageBuilderFactory, ...componentOpts } = options;
-        return this._component(
+        return this.formatComponent(
             'message',
             this.message(
                 messageDescriptor,
@@ -344,26 +350,26 @@ export default class Formatter {
         values?: Object = {},
         options?: htmlMessageOptions = {}): mixed
     {
-        return this._component('htmlMessage', this.htmlMessage(messageDescriptor, values), options);
+        return this.formatComponent('htmlMessage', this.htmlMessage(messageDescriptor, values), options);
     }
 
-    dateComponent(value: any, options?: dateComponentOptions = {}): string {
+    dateComponent(value: any, options?: dateComponentOptions = {}): mixed {
         const { component, ...fmtOpts } = options;
-        return this._component('date', this.date(value, fmtOpts), { component });
+        return this.formatComponent('date', this.date(value, fmtOpts), { component });
     }
 
-    timeComponent(value: any, options?: dateComponentOptions = {}): string {
+    timeComponent(value: any, options?: dateComponentOptions = {}): mixed {
         const { component, ...fmtOpts } = options;
-        return this._component('time', this.time(value, fmtOpts), { component });
+        return this.formatComponent('time', this.time(value, fmtOpts), { component });
     }
 
-    numberComponent(value: any, options?: numberComponentOptions = {}): string {
+    numberComponent(value: any, options?: numberComponentOptions = {}): mixed {
         const { component, ...fmtOpts } = options;
-        return this._component('number', this.number(value, fmtOpts), { component });
+        return this.formatComponent('number', this.number(value, fmtOpts), { component });
     }
 
-    relativeComponent(value: any, options?: relativeComponentOptions = {}): string {
+    relativeComponent(value: any, options?: relativeComponentOptions = {}): mixed {
         const { component, ...fmtOpts } = options;
-        return this._component('relative', this.relative(value, fmtOpts), { component });
+        return this.formatComponent('relative', this.relative(value, fmtOpts), { component });
     }
 }
