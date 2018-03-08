@@ -35,6 +35,11 @@ export function filterProps(props, whitelist, defaults = {}) {
   }, {});
 }
 
+export function defaultErrorHandler(msg, exception) {
+    const errMsg = exception ? `\n${exception}` : '';
+    console.error(`[Intl Format] ${msg}${errMsg}`);
+}
+
 export const shortIntlFuncNames = [
     'date',
     'time',

@@ -42,23 +42,23 @@ function updateRelativeFormatThresholds(newThresholds) {
   } = newThresholds);
 }
 
-function getNamedFormat(formats, type, name) {
+function getNamedFormat(formats, type, name, onError) {
   let format = formats && formats[type] && formats[type][name];
   if (format) {
     return format;
   }
 
   if (!IS_PROD) {
-    console.error(`[Intl Format] No ${type} format named: ${name}`);
+    onError(`No ${type} format named: ${name}`);
   }
 }
 
 export function formatDate(config, state, value, options = {}) {
-  const {locale, formats} = config;
+  const {locale, formats, onError} = config;
   const {format} = options;
 
   let date = new Date(value);
-  let defaults = format && getNamedFormat(formats, 'date', format);
+  let defaults = format && getNamedFormat(formats, 'date', format, onError);
   let filteredOptions = filterProps(
     options,
     dateTimeFormatPropNames,
@@ -69,7 +69,7 @@ export function formatDate(config, state, value, options = {}) {
     return state.getDateTimeFormat(locale, filteredOptions).format(date);
   } catch (e) {
     if (!IS_PROD) {
-      console.error(`[Intl Format] Error formatting date.\n${e}`);
+        onError('Error formatting date.', e);
     }
   }
 
@@ -77,11 +77,11 @@ export function formatDate(config, state, value, options = {}) {
 }
 
 export function formatTime(config, state, value, options = {}) {
-  const {locale, formats} = config;
+  const {locale, formats, onError} = config;
   const {format} = options;
 
   let date = new Date(value);
-  let defaults = format && getNamedFormat(formats, 'time', format);
+  let defaults = format && getNamedFormat(formats, 'time', format, onError);
   let filteredOptions = filterProps(
     options,
     dateTimeFormatPropNames,
@@ -101,7 +101,7 @@ export function formatTime(config, state, value, options = {}) {
     return state.getDateTimeFormat(locale, filteredOptions).format(date);
   } catch (e) {
     if (!IS_PROD) {
-      console.error(`[Intl Format] Error formatting time.\n${e}`);
+        onError('Error formatting time.', e);
     }
   }
 
@@ -109,12 +109,12 @@ export function formatTime(config, state, value, options = {}) {
 }
 
 export function formatRelative(config, state, value, options = {}) {
-  const {locale, formats} = config;
+  const {locale, formats, onError} = config;
   const {format} = options;
 
   let date = new Date(value);
   let now = new Date(options.now);
-  let defaults = format && getNamedFormat(formats, 'relative', format);
+  let defaults = format && getNamedFormat(formats, 'relative', format, onError);
   let filteredOptions = filterProps(options, relativeFormatPropNames, defaults);
 
   // Capture the current threshold values, then temporarily override them with
@@ -128,7 +128,7 @@ export function formatRelative(config, state, value, options = {}) {
     });
   } catch (e) {
     if (!IS_PROD) {
-      console.error(`[Intl Format] Error formatting relative time.\n${e}`);
+        onError('Error formatting relative time.', e);
     }
   } finally {
     updateRelativeFormatThresholds(oldThresholds);
@@ -138,17 +138,17 @@ export function formatRelative(config, state, value, options = {}) {
 }
 
 export function formatNumber(config, state, value, options = {}) {
-  const {locale, formats} = config;
+  const {locale, formats, onError} = config;
   const {format} = options;
 
-  let defaults = format && getNamedFormat(formats, 'number', format);
+  let defaults = format && getNamedFormat(formats, 'number', format, onError);
   let filteredOptions = filterProps(options, numberFormatPropNames, defaults);
 
   try {
     return state.getNumberFormat(locale, filteredOptions).format(value);
   } catch (e) {
     if (!IS_PROD) {
-      console.error(`[Intl Format] Error formatting number.\n${e}`);
+      onError('Error formatting number.', e);
     }
   }
 
@@ -156,7 +156,7 @@ export function formatNumber(config, state, value, options = {}) {
 }
 
 export function formatPlural(config, state, value, options = {}) {
-  const {locale} = config;
+  const {locale, onError} = config;
 
   let filteredOptions = filterProps(options, pluralFormatPropNames);
 
@@ -164,7 +164,7 @@ export function formatPlural(config, state, value, options = {}) {
     return state.getPluralFormat(locale, filteredOptions).format(value);
   } catch (e) {
     if (!IS_PROD) {
-      console.error(`[Intl Format] Error formatting plural.\n${e}`);
+      onError('Error formatting plural', e);
     }
   }
 
@@ -178,7 +178,7 @@ export function formatMessage(
   values = {},
   messageBuilderFactory
 ) {
-  const {locale, formats, messages, defaultLocale, defaultFormats, requireOther} = config;
+  const {locale, formats, messages, defaultLocale, defaultFormats, requireOther, onError} = config;
 
   const {id, defaultMessage} = messageDescriptor;
 
@@ -203,10 +203,9 @@ export function formatMessage(
       formattedMessage = formatter.format(values, messageBuilderFactory);
     } catch (e) {
       if (!IS_PROD) {
-        console.error(
-          `[Intl Format] Error formatting message: "${id}" for locale: "${locale}"` +
-            (defaultMessage ? ', using default message as fallback.' : '') +
-            `\n${e}`
+        onError(
+          `Error formatting message: "${id}" for locale: "${locale}"` +
+            (defaultMessage ? ', using default message as fallback.' : ''), e
         );
       }
     }
@@ -219,8 +218,8 @@ export function formatMessage(
         !defaultMessage ||
         (locale && locale.toLowerCase() !== defaultLocale.toLowerCase())
       ) {
-        console.error(
-          `[Intl Format] Missing message: "${id}" for locale: "${locale}"` +
+        onError(
+          `Missing message: "${id}" for locale: "${locale}"` +
             (defaultMessage ? ', using default message as fallback.' : '')
         );
       }
@@ -239,18 +238,15 @@ export function formatMessage(
       formattedMessage = formatter.format(values, messageBuilderFactory);
     } catch (e) {
       if (!IS_PROD) {
-        console.error(
-          `[Intl Format] Error formatting the default message for: "${id}"` +
-            `\n${e}`
-        );
+        onError(`Error formatting the default message for: "${id}"`, e);
       }
     }
   }
 
   if (!formattedMessage) {
     if (!IS_PROD) {
-      console.error(
-        `[Intl Format] Cannot format message: "${id}", ` +
+      onError(
+        `Cannot format message: "${id}", ` +
           `using message ${message || defaultMessage
             ? 'source'
             : 'id'} as fallback.`
