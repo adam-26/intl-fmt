@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.3.0"></a>
+# [3.3.0](https://github.com/adam-26/intl-format/compare/v3.2.0...v3.3.0) (2018-03-08)
+
+
+### Features
+
+* **code:** Internal API changes ([fa33d9d](https://github.com/adam-26/intl-format/commit/fa33d9d))
+* **code:** Internal API changes ([#6](https://github.com/adam-26/intl-format/issues/6)) ([cb78b16](https://github.com/adam-26/intl-format/commit/cb78b16))
+
+
+
 <a name="3.2.0"></a>
 # [3.2.0](https://github.com/adam-26/intl-format/compare/v3.1.0...v3.2.0) (2018-03-08)
 
