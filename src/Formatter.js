@@ -198,6 +198,8 @@ export default class Formatter {
     changeLocale(locale: string, options?: intlFormatOptionsType = {}): Formatter {
         invariant(typeof locale === 'string', 'locale string value is required.');
 
+        // remove 'now' from the factories
+        // eslint-disable-next-line no-unused-vars
         const { now, ...formatFactories } = this._formatterState;
         const newOpts = optionNames.reduce((newOpts, optName) => {
             newOpts[optName] = typeof options[optName] !== 'undefined' ? options[optName] : this._config[optName];
