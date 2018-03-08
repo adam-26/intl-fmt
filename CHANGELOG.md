@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.2.0"></a>
+# [3.2.0](https://github.com/adam-26/intl-format/compare/v3.1.0...v3.2.0) (2018-03-08)
+
+
+### Features
+
+* **api:** Add `*Component` methods ([e4d66dd](https://github.com/adam-26/intl-format/commit/e4d66dd))
+* **api:** Add `*Component` methods  ([#5](https://github.com/adam-26/intl-format/issues/5)) ([9f2c348](https://github.com/adam-26/intl-format/commit/9f2c348))
+
+
+
 <a name="3.1.0"></a>
 # [3.1.0](https://github.com/adam-26/intl-format/compare/v3.0.1...v3.1.0) (2018-03-08)
 
