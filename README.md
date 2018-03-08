@@ -14,6 +14,8 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 > It uses the same well tested code to expose an internationalization API **without any React dependencies**
 
+> It add supports for `Tags` in translation messages: "please <x:link>click here</x:link>"
+
 > The only _breaking change_ is that whitespace inside **plural** ICU messages is now preserved. This may impact your existing translations.
 
 > You _may_ need to set the `requireOther: false` option for backward compatibility if your ICU complex messages are missing the _other_ option.
@@ -29,14 +31,15 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 - Runs in the browser and Node.js.
 - Built on standards.
 - Extended to support `Tags`
+- Customize the _method names_ used for formatting
 
 > This supports the [ICU message translation format, read more about it here](https://formatjs.io/guides/message-syntax/).
 
 > **Tags are not part of the ICU message standard**.
 
 _Differences_ from the original package include:
- * **No React dependency** - want to use `Tags` with React? See [react-intl-fmt](https://github.com/adam-26/react-intl-format), a drop-in replacement for [react-intl](https://github.com/yahoo/react-intl)
  * As well as supporting ICU messages, this package also supports the use of `tags` in translations. [Whats a tag?](#whatsatag)
+ * **No React dependency** - want to use `Tags` with React? See [react-intl-fmt](https://github.com/adam-26/react-intl-format), a drop-in replacement for [react-intl](https://github.com/yahoo/react-intl)
 
 ### Whats a Tag?
 
@@ -61,7 +64,9 @@ const formattedMsg = fmt.message(msgDescriptor, {
 console.log(formattedMsg); // Agree to our <a href='#'>terms and conditions</a>?
 ```
 
-[Read more about tags here](#tags).
+[Read the original react-intl issue discussing tags here.](https://github.com/yahoo/react-intl/issues/513)
+
+[More information about using tags below](#tags).
 
 Overview
 --------
@@ -140,6 +145,43 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
 
 ### Intl Formatter API
 
+### _static_ `create(options: createFormatterOpts): IntlFmt`
+A factory method for creating new `IntlFmt` classes that include _custom shorthand method names_.
+
+Many _i18n_ packages use either `_()` or `t()` for formatting translated messages. You can now use this factory method to assign your own shorthand syntax to the `IntlFmt` class.
+
+Define the _createFormatterOpts_:
+  * `message?: string`:  The short method name for `message()`.
+  * `messageComponent?: string`: The short method name for `messageComponent()`.
+  * `htmlMessage?: string`: The short method name for `htmlMessage()`.
+  * `htmlMessageComponent?: string`: The short method name for `htmlMessageComponent()`.
+  * `date?: string`: The short method name for `date()`.
+  * `dateComponent?: string`: The short method name for `dateComponent()`.
+  * `time?: string`: The short method name for `time()`.
+  * `timeComponent?: string`: The short method name for `timeComponent()`.
+  * `number?: string`: The short method name for `number()`.
+  * `numberComponent?: string`: The short method name for `numberComponent()`.
+  * `relative?: string`: The short method name for `relative()`.
+  * `relativeComponent?: string`: The short method name for `relativeComponent()`.
+  * `plural?: string`: The short method name for `plural()`.
+
+Example:
+```js
+// Create a new Formatter class
+const CustomFormatter = Formatter.create({
+  message: 'm',
+  messageComponent: 'mc'
+});
+
+// Create a new class instance
+const customFormatter = new CustomFormatter(locale, options);
+
+// Use the shorthand methods
+console.log(customerFormatter.m({ id: 'msg_id' }));
+console.log(customerFormatter.mc({ id: 'msg_id' }));
+
+```
+
 ### Constructor `new IntlFmt(locale?: string, options: IntlFormatOptions): IntlFmt`
 
  * `locale` is optional, but must be defined if providing options
@@ -150,11 +192,11 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
    * `formats: Object` - custom formats, defaults to `{}`
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
-   * `messageBuilderFactory`: The factory used to format `message` output
-   * `defaultHtmlElementName: string` - A tag name that will be used to surround all formatted output. ie; `span` will result in all formatted values being rendered in `<span>msg</span>` tags.
-   * `defaultRenderMethod: (text) => string` - A function that can be used to customize all formatted output. The `defaultRenderMethod` takes precedence over the `defaultHtmlElementName` if both are defined.
-   * `htmlElements: { [formatterName]: string }`: An object of key/value pairs that define a html element to wrap specific formatter method output
-   * `renderMethods: { [formatterName]: string }`: An object of key/value pairs that define a render method to wrap specific formatter method output. `renderMethods` take precedence over `htmlElements` if both are defined for the same formatter.
+   * `defaultComponent: string | (value) => mixed` - A string or function used to format all `*Component()` methods. ie; `span` will result in a formatted component being rendered as `<span>value</span>`.
+   * `components: { [formatMethodName]: string | (value) => mixed }`: An object of key/value pairs that define the component render configuration for specific formatter(s).
+   * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
+   * `textMessageBuilderFactory`: The factory used to format `message` output
+   * `componentMessageBuilderFactory`: The factory used to format `messageComponent()` output
 
 #### `locale(): string`
 Returns the current locale.
@@ -165,7 +207,7 @@ Returns the value being used to represent `now`.
 #### `setNow(now?: number): void`
 Sets the value used to represent `now`.
 
-#### `message(msgDescriptor: MessageDescriptor, values?: Object, messageBuilderFactory?: MessageBuilderFactory): string`
+#### `message(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): string`
 Formats a message descriptor using the optionally assigned values.
 
 #### `htmlMessage(msgDescriptor: MessageDescriptor, values?: Object): string`
@@ -178,7 +220,7 @@ Formats a date for the current locale.
 #### `time(value: any, options?: DateTimeFormatOptions): string`
 Formats a time for the current locale.
 
-#### `number(value: any, options?: NateTimeFormatOptions): string`
+#### `number(value: any, options?: NumberFormatOptions): string`
 Formats a number for the current locale.
 
 #### `relative(value: any, options?: RelativeFormatOptions): string`
@@ -239,7 +281,7 @@ Check out the [Contributing document](https://github.com/adam-26/intl-format/blo
 
 For bugs or issues, please open an issue, and you're welcome to submit a PR for bug fixes and feature requests.
 
-Before submitting a PR, ensure you run npm test to verify that your coe adheres to the configured lint rules and passes all tests. Be sure to include unit tests for any code changes or additions.
+Before submitting a PR, ensure you run npm test to verify that your code adheres to the configured lint rules and passes all tests. Be sure to include unit tests for any code changes or additions.
 
 License
 -------

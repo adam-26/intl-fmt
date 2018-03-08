@@ -6,28 +6,25 @@ import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
 import { hasLocaleData } from "./locale-data-registry";
-import {intlFormatPropNames, shortIntlFuncNames} from "./utils";
+import {defaultErrorHandler, intlFormatPropNames, shortIntlFuncNames} from "./utils";
 import type {
-    dateTimeFormatOptions,
-    numberFormatOptions,
+    relativeOptions,
     pluralFormatOptions,
-    relativeFormatOptions,
     messageDescriptorType,
     intlFormatOptionsType,
-    messageBuilderType
+    numberOptions,
+    dateOptions,
+    messageOptions,
+    messageComponentOptions,
+    dateComponentOptions,
+    numberComponentOptions,
+    relativeComponentOptions,
+    htmlMessageOptions,
+    componentOptions
 } from "./types";
 
 const defaultMessages = {};
 const IS_PROD = process.env.NODE_ENV === 'production';
-
-const defaultNestedOpts = {
-    message: null,
-    htmlMessage: null,
-    date: null,
-    time: null,
-    number: null,
-    relative: null,
-};
 
 const defaultOpts = {
     messages: null,
@@ -37,9 +34,13 @@ const defaultOpts = {
     initialNow: null,
 
     requireOther: true,
-    messageBuilderFactory: StringBuilderFactory,
-    defaultHtmlElementName: null,
-    defaultRenderMethod: null,
+    textMessageBuilderFactory: StringBuilderFactory,
+    componentMessageBuilderFactory: StringBuilderFactory,
+
+    defaultComponent: 'span',
+    components: {},
+
+    onError: defaultErrorHandler,
 
     // Deprecated
     textRenderer: null,
@@ -48,23 +49,148 @@ const defaultOpts = {
 
 const optionNames = Object.keys(defaultOpts);
 
-function resolveRenderer(htmlElement, renderMethod, defaultHtmlElementName, defaultRenderMethod) {
-    return renderMethod ||
-        getDefaultTextRenderer(htmlElement) ||
-        defaultRenderMethod ||
-        getDefaultTextRenderer(defaultHtmlElementName);
-}
-
-function getDefaultTextRenderer(textComponent) {
-    if (typeof textComponent === 'undefined' || textComponent === null) {
-        return null;
+function resolveRenderer(component, defaultComponent) {
+    const renderComponent = component || defaultComponent;
+    if (typeof renderComponent === 'string') {
+        return renderComponent;
     }
 
-    invariant(typeof textComponent === 'string', '[Intl Fmt] All `htmlElements` option names must be strings.');
-    return (text) => `<${textComponent}>${text}</${textComponent}>`;
+    invariant(typeof renderComponent === 'function', '[Intl Fmt] All optional `components` must be either a string or function.');
+    return renderComponent;
+}
+
+function getFormatFactories() {
+    return {
+        getDateTimeFormat: memoizeIntlConstructor(Intl.DateTimeFormat),
+        getNumberFormat: memoizeIntlConstructor(Intl.NumberFormat),
+        getMessageFormat: memoizeIntlConstructor(IntlMessageFormat),
+        getRelativeFormat: memoizeIntlConstructor(IntlRelativeFormat),
+        getPluralFormat: memoizeIntlConstructor(IntlPluralFormat)
+    };
+}
+
+function getLocaleConfig(locale: string, options) {
+    const {
+        messages,
+        formats,
+        defaultLocale,
+        defaultFormats
+    } = options;
+
+    if (!hasLocaleData(locale)) {
+        if (IS_PROD) {
+            options.onError(
+                `[Intl Format] Missing locale data for locale: "${locale}". ` +
+                `Using default locale: "${defaultLocale}" as fallback.`
+            );
+        }
+
+        // Since there's no registered locale data for `locale`, this will
+        // fallback to the `defaultLocale` to make sure things can render.
+        // The `messages` are overridden to the `defaultProps` empty object
+        // to maintain referential equality across re-renders. It's assumed
+        // each `formatMessage(msgProps, values)` contains a `defaultMessage` prop.
+        return {
+            ...options,
+            locale: defaultLocale,
+            formats: defaultFormats,
+            messages: defaultMessages,
+        };
+    }
+
+    return {
+        ...options,
+        locale: locale || defaultLocale,
+        formats: formats || defaultFormats,
+        messages: messages || defaultMessages
+    };
+}
+
+function bindFormatters(config, formatterState): Object {
+    return intlFormatPropNames.reduce((boundFormatFns, name) => {
+        if (name !== 'now') {
+            boundFormatFns[name] = format[name].bind(null, config, formatterState);
+        }
+
+        return boundFormatFns;
+    }, {});
 }
 
 export default class Formatter {
+
+    static create(options?: Object = {}) {
+        const opts = Object.assign({
+            message: 'm',
+            messageComponent: 'mc',
+            htmlMessage: 'h',
+            htmlMessageComponent: 'hc',
+            date: 'd',
+            dateComponent: 'dc',
+            time: 't',
+            timeComponent: 'tc',
+            number: 'n',
+            numberComponent: 'nc',
+            relative: 'r',
+            relativeComponent: 'rc',
+            plural: 'p'
+        }, options);
+
+        class CustomFormatter extends Formatter {
+            [opts.message](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
+                return this.message(messageDescriptor, values, options);
+            }
+
+            [opts.htmlMessage](messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
+                return this.htmlMessage(messageDescriptor, values);
+            }
+
+            [opts.date](value: any, options?: dateOptions = {}): string {
+                return this.date(value, options);
+            }
+
+            [opts.time](value: any, options?: dateOptions = {}): string {
+                return this.time(value, options);
+            }
+
+            [opts.number](value: any, options?: numberOptions = {}): string {
+                return this.number(value, options);
+            }
+
+            [opts.relative](value: any, options?: relativeOptions = {}): string {
+                return this.relative(value, options);
+            }
+
+            [opts.plural](value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
+                return this.plural(value, options);
+            }
+
+            [opts.messageComponent](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageComponentOptions = {}): mixed {
+                return this.messageComponent(messageDescriptor, values, options);
+            }
+
+            [opts.htmlMessageComponent](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: htmlMessageOptions = {}): mixed {
+                return this.htmlMessageComponent(messageDescriptor, values, options);
+            }
+
+            [opts.dateComponent](value: any, options?: dateComponentOptions = {}): string {
+                return this.dateComponent(value, options);
+            }
+
+            [opts.timeComponent](value: any, options?: dateComponentOptions = {}): string {
+                return this.timeComponent(value, options);
+            }
+
+            [opts.numberComponent](value: any, options?: numberComponentOptions = {}): string {
+                return this.numberComponent(value, options);
+            }
+
+            [opts.relativeComponent](value: any, options?: relativeComponentOptions = {}): string {
+                return this.relativeComponent(value, options);
+            }
+        }
+
+        return CustomFormatter;
+    }
 
     constructor(locale: string = 'en', options?: intlFormatOptionsType = {}) {
         invariant(
@@ -74,46 +200,31 @@ export default class Formatter {
             'See: http://formatjs.io/guides/runtime-environments/'
         );
 
-        // Merge nested opts
-        const { htmlElements, renderMethods, ...formatterOpts } = options;
-        const htmlOpts = Object.assign({}, defaultNestedOpts, htmlElements);
-        const renderOpts = Object.assign({}, defaultNestedOpts, renderMethods);
-
         const {
             formatFactories,
             ...configOpts
-        } = Object.assign({}, defaultOpts, formatterOpts, { htmlElements: htmlOpts, renderMethods: renderOpts });
-        const { textComponent, textRenderer, defaultRenderMethod } = configOpts;
+        } = Object.assign({}, defaultOpts, options);
+        const { textComponent, textRenderer } = configOpts;
 
         if (!IS_PROD) {
             if (textComponent !== null) {
-                console.warn('[Intl Format] Option `textComponent` will be deprecated in a future version. Use `defaultHtmlElementName` instead.');
+                console.warn('[Intl Format] Option `textComponent` will be deprecated in a future version. Use `defaultComponent` instead.');
             }
 
             if (textRenderer !== null) {
-                console.warn('[Intl Format] Option `textRenderer` will be deprecated in a future version. Use `defaultRenderMethod` instead.');
-            }
-
-            if (textRenderer !== null) {
-                invariant(typeof textRenderer === 'function', '[Intl Format] Formatter constructor expects the `textRenderer` option to be a function.');
-            }
-
-            if (defaultRenderMethod !== null) {
-                invariant(typeof defaultRenderMethod === 'function', '[Intl Format] Formatter constructor expects the `defaultRenderMethod` option to be a function.');
+                console.warn('[Intl Format] Option `textRenderer` will be deprecated in a future version. Use `defaultComponent` instead.');
             }
         }
 
-        this._config = this._getLocaleConfig(locale, configOpts);
-        this._renderers = shortIntlFuncNames.reduce((acc, fnName) => {
+        this._config = getLocaleConfig(locale, configOpts);
+        this._components = shortIntlFuncNames.reduce((acc, fnName) => {
             if (fnName === 'plural') {
                 return acc;
             }
 
             acc[fnName] = resolveRenderer(
-                this._config.htmlElements[fnName],
-                this._config.renderMethods[fnName],
-                this._config.defaultHtmlElementName || textComponent,
-                this._config.defaultRenderMethod || textRenderer);
+                this._config.components[fnName],
+                this._config.defaultComponent);
             return acc;
         }, {});
 
@@ -126,68 +237,22 @@ export default class Formatter {
         // memoize the `Intl*` constructors and cache them for the lifecycle of
         // this Formatter instance.
         this._formatterState = {
-            ...(formatFactories || this._getFormatFactories()),
+            ...(formatFactories || getFormatFactories()),
             now: () => this.now()
         };
 
-        this._formatters = this._bindFormatters(this._config, this._formatterState)
+        this._formatters = bindFormatters(this._config, this._formatterState)
     }
 
-    _getFormatFactories() {
-        return {
-            getDateTimeFormat: memoizeIntlConstructor(Intl.DateTimeFormat),
-            getNumberFormat: memoizeIntlConstructor(Intl.NumberFormat),
-            getMessageFormat: memoizeIntlConstructor(IntlMessageFormat),
-            getRelativeFormat: memoizeIntlConstructor(IntlRelativeFormat),
-            getPluralFormat: memoizeIntlConstructor(IntlPluralFormat)
-        };
-    }
+    _component(fnName: string, value: string, options?: componentOptions): string {
+        const { component } = options;
+        const render = component || this._components[fnName];
 
-    _getLocaleConfig(locale: string, options) {
-        const {
-            messages,
-            formats,
-            defaultLocale,
-            defaultFormats
-        } = options;
-
-        if (!hasLocaleData(locale)) {
-            if (IS_PROD) {
-                console.error(
-                    `[Intl Format] Missing locale data for locale: "${locale}". ` +
-                    `Using default locale: "${defaultLocale}" as fallback.`
-                );
-            }
-
-            // Since there's no registered locale data for `locale`, this will
-            // fallback to the `defaultLocale` to make sure things can render.
-            // The `messages` are overridden to the `defaultProps` empty object
-            // to maintain referential equality across re-renders. It's assumed
-            // each `formatMessage(msgProps, values)` contains a `defaultMessage` prop.
-            return {
-                ...options,
-                locale: defaultLocale,
-                formats: defaultFormats,
-                messages: defaultMessages,
-            };
+        if (typeof render === 'string') {
+            return `<${render}>${value}</${render}>`;
         }
 
-        return {
-            ...options,
-            locale: locale || defaultLocale,
-            formats: formats || defaultFormats,
-            messages: messages || defaultMessages
-        };
-    }
-
-    _bindFormatters(config, formatterState): Object {
-        return intlFormatPropNames.reduce((boundFormatFns, name) => {
-            if (name !== 'now') {
-                boundFormatFns[name] = format[name].bind(null, config, formatterState);
-            }
-
-            return boundFormatFns;
-        }, {});
+        return render(value);
     }
 
     get options() {
@@ -226,72 +291,79 @@ export default class Formatter {
             () => new Date().getTime();
     }
 
-    _render(fnName: string, value: string): string {
-        if (this._renderers[fnName]) {
-            return this._renderers[fnName](value);
-        }
-
-        return value;
-    }
-
-    message(
-        messageDescriptor: messageDescriptorType,
-        values?: Object = {},
-        messageBuilderFactory?: messageBuilderType
-        ): string | mixed
-    {
-        return this._render('message', this._formatters.formatMessage(
+    message(messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
+        return this._formatters.formatMessage(
             messageDescriptor,
             values,
-            messageBuilderFactory || this._config.messageBuilderFactory));
+            options.messageBuilderFactory || this._config.textMessageBuilderFactory);
     }
 
-    htmlMessage(
-        messageDescriptor: messageDescriptorType,
-        values?: Object = {}
-        ): string | mixed
-    {
-        return this._render('htmlMessage', this._formatters.formatHTMLMessage(messageDescriptor, values));
+    htmlMessage(messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
+        return this._formatters.formatHTMLMessage(messageDescriptor, values);
     }
 
-    date(value: any,
-         options?: dateTimeFormatOptions & {format?: string}
-    ): string
-    {
-        return this._render('date', this._formatters.formatDate(value, options));
+    date(value: any, options?: dateOptions = {}): string {
+        return this._formatters.formatDate(value, options);
     }
 
-    time(value: any,
-         options?: dateTimeFormatOptions & {format?: string}
-    ): string
-    {
-        return this._render('time', this._formatters.formatTime(value, options));
+    time(value: any, options?: dateOptions = {}): string {
+        return this._formatters.formatTime(value, options);
     }
 
-    number(
-        value: any,
-        options?: numberFormatOptions & {format?: string}
-        ): string
-    {
-        return this._render('number', this._formatters.formatNumber(value, options));
+    number(value: any, options?: numberOptions = {}): string {
+        return this._formatters.formatNumber(value, options);
     }
 
-    relative(
-        value: any,
-        options?: relativeFormatOptions & {
-            format?: string,
-            now?: any
-        }
-    ): string
-    {
-        return this._render('relative', this._formatters.formatRelative(value, options));
+    relative(value: any, options?: relativeOptions = {}): string {
+        return this._formatters.formatRelative(value, options);
     }
-
-    plural(
-        value: any,
-        options?: pluralFormatOptions
-    ): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other'
-    {
+    
+    plural(value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
         return this._formatters.formatPlural(value, options);
+    }
+
+    messageComponent(
+        messageDescriptor: messageDescriptorType,
+        values?: Object = {},
+        options?: messageComponentOptions = {}
+    ): mixed
+    {
+        const { messageBuilderFactory, ...componentOpts } = options;
+        return this._component(
+            'message',
+            this.message(
+                messageDescriptor,
+                values,
+                { messageBuilderFactory: messageBuilderFactory || this._config.componentMessageBuilderFactory }),
+            componentOpts
+        );
+    }
+
+    htmlMessageComponent(
+        messageDescriptor: messageDescriptorType,
+        values?: Object = {},
+        options?: htmlMessageOptions = {}): mixed
+    {
+        return this._component('htmlMessage', this.htmlMessage(messageDescriptor, values), options);
+    }
+
+    dateComponent(value: any, options?: dateComponentOptions = {}): string {
+        const { component, ...fmtOpts } = options;
+        return this._component('date', this.date(value, fmtOpts), { component });
+    }
+
+    timeComponent(value: any, options?: dateComponentOptions = {}): string {
+        const { component, ...fmtOpts } = options;
+        return this._component('time', this.time(value, fmtOpts), { component });
+    }
+
+    numberComponent(value: any, options?: numberComponentOptions = {}): string {
+        const { component, ...fmtOpts } = options;
+        return this._component('number', this.number(value, fmtOpts), { component });
+    }
+
+    relativeComponent(value: any, options?: relativeComponentOptions = {}): string {
+        const { component, ...fmtOpts } = options;
+        return this._component('relative', this.relative(value, fmtOpts), { component });
     }
 }
