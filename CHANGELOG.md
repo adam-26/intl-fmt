@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.1.0"></a>
+# [3.1.0](https://github.com/adam-26/intl-format/compare/v3.0.1...v3.1.0) (2018-03-08)
+
+
+### Bug Fixes
+
+* **build:** fix lint error ([c3ad957](https://github.com/adam-26/intl-format/commit/c3ad957))
+
+
+### Features
+
+* **code:** add message builder  ([#4](https://github.com/adam-26/intl-format/issues/4)) ([76cdf43](https://github.com/adam-26/intl-format/commit/76cdf43))
+* **code:** message builder ([e5e5c17](https://github.com/adam-26/intl-format/commit/e5e5c17))
+
+
+
 <a name="3.0.1"></a>
 ## [3.0.1](https://github.com/adam-26/intl-format/compare/v3.0.0...v3.0.1) (2018-03-06)
 
