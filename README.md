@@ -395,3 +395,4 @@ License
 
 This software is free to use under the Yahoo Inc. BSD license.
 See the [LICENSE file](https://github.com/adam-26/intl-format/blob/master/LICENSE.md) for license text and copyright information.
+
