@@ -61,6 +61,7 @@ export const intlFormatPropNames = [
 ];
 
 export const dateTimeFormatPropNames = [
+  'format',
   'localeMatcher',
   'formatMatcher',
   'timeZone',
@@ -77,6 +78,7 @@ export const dateTimeFormatPropNames = [
 ];
 
 export const numberFormatPropNames = [
+  'format',
   'localeMatcher',
   'style',
   'currency',
@@ -90,6 +92,7 @@ export const numberFormatPropNames = [
 ];
 
 export const relativeFormatPropNames = [
+  'format',
   'style',
   'units'
 ];
