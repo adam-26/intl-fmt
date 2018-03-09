@@ -12,7 +12,7 @@ export type messageBuilderType = {
     build: () => mixed;
 };
 
-export type componentType = string | (text: string) => mixed;
+export type htmlElementType = string | (text: string) => mixed;
 
 export type intlFormatOptionsType = {
     messages?: Object,
@@ -24,12 +24,7 @@ export type intlFormatOptionsType = {
     initialNow?: number | () => number,
 
     // message builders
-    textMessageBuilderFactory: () => messageBuilderType,
-    componentMessageBuilderFactory: () => messageBuilderType,
-
-    // render opts
-    defaultComponent?: componentType,
-    components?: { [name]: componentType },
+    messageBuilderFactory: () => messageBuilderType,
 
     onError?: (message: string, exception?: Error) => void,
 
@@ -56,18 +51,23 @@ export type dateTimeFormatOptions = {
     timeZoneName: 'short' | 'long',
 };
 
-export type componentBuilderType = {
+export type htmlElementBuilderType = {
     appendOpeningTag: (token: string) => void,
     appendClosingTag: (token: string) => void,
     appendChildren: (token: any) => void,
     build: () => mixed
 };
 
-export type componentBuilderFactoryType = () => componentBuilderType;
+export type intlHtmlFormatOptionsType = {
+    ...intlFormatOptionsType,
+    ...htmlElementOptions,
+    defaultTagName: htmlElementType
+};
 
-export type componentOptions = {
-    component?: componentType,
-    componentBuilderFactory?: componentBuilderFactoryType
+export type htmlElementOptions = {
+    tagName?: htmlElementType,
+    htmlMessageBuilderFactory?: () => messageBuilderType,
+    htmlElementBuilderFactory?: () => htmlElementBuilderType
 };
 
 export type dateOptions = {
@@ -75,9 +75,9 @@ export type dateOptions = {
     format?: string
 };
 
-export type dateComponentOptions = {
+export type dateElementOptions = {
     ...dateOptions,
-    ...componentOptions
+    ...htmlElementOptions
 };
 
 export type relativeFormatOptions = {
@@ -91,9 +91,9 @@ export type relativeOptions = {
     now?: any
 };
 
-export type relativeComponentOptions = {
+export type relativeElementOptions = {
     ...relativeOptions,
-    ...componentOptions
+    ...htmlElementOptions
 };
 
 export type numberFormatOptions = {
@@ -118,9 +118,9 @@ export type numberOptions = {
     format?: string
 };
 
-export type numberComponentOptions = {
+export type numberElementOptions = {
     ...numberOptions,
-    ...componentOptions
+    ...htmlElementOptions
 };
 
 export type pluralFormatOptions = {
@@ -131,13 +131,13 @@ export type messageOptions = {
     messageBuilderFactory?: () => messageBuilderType,
 };
 
-export type messageComponentOptions = {
+export type messageElementOptions = {
     ...messageOptions,
-    ...componentOptions
+    ...htmlElementOptions
 };
 
 export type htmlMessageOptions = {
-    ...componentOptions
+    ...htmlElementOptions
 };
 
 export type changeLocaleType = (locale: string, options?: intlFormatOptionsType) => IntlFormat;
@@ -148,18 +148,18 @@ export type formatRelativeType = (value: any, options?: relativeOptions) => stri
 export type formatNumberType = (value: any, options?: numberOptions) => string;
 export type formatPluralType = (value: any, options?: pluralFormatOptions) => 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
 
-export type formatMessageComponentType = (messageDescriptor: messageDescriptorType, values?: Object, options?: messageComponentOptions) => mixed;
-export type formatDateComponentType = (value: any, options?: dateComponentOptions) => string;
-export type formatTimeComponentType = (value: any, options?: dateComponentOptions) => string;
-export type formatRelativeComponentType = (value: any, options?: relativeComponentOptions) => string;
-export type formatNumberComponentType = (value: any, options?: numberComponentOptions) => string;
-
+export type formatMessageComponentType = (messageDescriptor: messageDescriptorType, values?: Object, options?: messageElementOptions) => mixed;
+export type formatDateComponentType = (value: any, options?: dateElementOptions) => string;
+export type formatTimeComponentType = (value: any, options?: dateElementOptions) => string;
+export type formatRelativeComponentType = (value: any, options?: relativeElementOptions) => string;
+export type formatNumberComponentType = (value: any, options?: numberElementOptions) => string;
 
 export type IntlFormat = {
     now: () => number,
     setNow: (initialNow: number) => void,
     changeLocale: changeLocaleType,
 
+    // Backward compatibility
     formatPlural: formatPluralType,
     formatDate: formatDateType,
     formatTime: formatTimeType,
@@ -168,6 +168,7 @@ export type IntlFormat = {
     formatMessage: formatMessageType,
     formatHTMLMessage: formatMessageType,
 
+    // Short method names
     plural: formatPluralType,
     date: formatDateType,
     time: formatTimeType,
@@ -175,6 +176,10 @@ export type IntlFormat = {
     number: formatNumberType,
     message: formatMessageType,
     htmlMessage: formatMessageType,
+};
+
+export type HtmlIntlFormat = {
+    ...IntlFormat,
 
     dateComponent: formatDateComponentType,
     timeComponent: formatTimeComponentType,

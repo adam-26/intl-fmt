@@ -104,6 +104,7 @@ const fmt = new IntlFmt(locale, fmtOpts);
 ### Package Exports
  * `default`: IntlFormatter - the main class used for formatting localized values
  * `Formatter`: IntlFormatter - a named instance of the `default` export, to make browser usage easier
+ * `HtmlFormatter`: IntlHtmlFormatter - A formatter with additional methods for rendering formatted text as HTML elements
  * `addLocaleData: function`: Used to add additional locale data into the current environment
  * `defineMessages: function`: A utility method for provide a hook to babel plugins to messages at build time
  * `StringBuilderFactory`: The default factory method used to format `message` strings
@@ -143,7 +144,7 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
 </script>
 ```
 
-### Intl Formatter API
+## Intl Formatter API
 
 ### _static_ `create(options: createFormatterOpts): IntlFmt`
 A factory method for creating new `IntlFmt` classes that include _custom shorthand method names_.
@@ -152,25 +153,21 @@ Many _i18n_ packages use either `_()` or `t()` for formatting translated message
 
 Define the _createFormatterOpts_:
   * `message?: string`:  The short method name for `message()`.
-  * `messageComponent?: string`: The short method name for `messageComponent()`.
   * `htmlMessage?: string`: The short method name for `htmlMessage()`.
-  * `htmlMessageComponent?: string`: The short method name for `htmlMessageComponent()`.
   * `date?: string`: The short method name for `date()`.
-  * `dateComponent?: string`: The short method name for `dateComponent()`.
   * `time?: string`: The short method name for `time()`.
-  * `timeComponent?: string`: The short method name for `timeComponent()`.
   * `number?: string`: The short method name for `number()`.
-  * `numberComponent?: string`: The short method name for `numberComponent()`.
   * `relative?: string`: The short method name for `relative()`.
-  * `relativeComponent?: string`: The short method name for `relativeComponent()`.
   * `plural?: string`: The short method name for `plural()`.
 
 Example:
 ```js
+import IntlFmt from 'intl-fmt';
+
 // Create a new Formatter class
-const CustomFormatter = Formatter.create({
+const CustomFormatter = IntlFmt.create({
   message: 'm',
-  messageComponent: 'mc'
+  // other options here...
 });
 
 // Create a new class instance
@@ -178,8 +175,6 @@ const customFormatter = new CustomFormatter(locale, options);
 
 // Use the shorthand methods
 console.log(customerFormatter.m({ id: 'msg_id' }));
-console.log(customerFormatter.mc({ id: 'msg_id' }));
-
 ```
 
 ### Constructor `new IntlFmt(locale?: string, options: IntlFormatOptions): IntlFmt`
@@ -192,11 +187,8 @@ console.log(customerFormatter.mc({ id: 'msg_id' }));
    * `formats: Object` - custom formats, defaults to `{}`
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
-   * `defaultComponent: string | (value) => mixed` - A string or function used to format all `*Component()` methods. ie; `span` will result in a formatted component being rendered as `<span>value</span>`.
-   * `components: { [formatMethodName]: string | (value) => mixed }`: An object of key/value pairs that define the component render configuration for specific formatter(s).
    * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
-   * `textMessageBuilderFactory`: The factory used to format `message` output
-   * `componentMessageBuilderFactory`: The factory used to format `messageComponent()` output
+   * `messageBuilderFactory`: The factory used to format `message` output
 
 #### `locale(): string`
 Returns the current locale.
@@ -230,32 +222,126 @@ Formats a relative time for the current locale, ie: `3 hours ago`.
 Returns a value indicating the plurality of the value.
 The return value will be one of `zero, one, two, few, many, other`
 
-#### `messageComponent(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
-Formats a message descriptor as a component.
-
-#### `htmlMessageComponent(msgDescriptor: MessageDescriptor, values?: Object, options?: htmlMessageOptions): mixed`
-Formats a HTML message descriptor as a component.
-
-_This exists for backwards compatibility only_. Using this method is **not recommended**, use `messageComponent()` instead.
-
-#### `dateComponent(value: any, options?: DateTimeComponentOptions): mixed`
-Formats a date for the current locale as a component.
-
-#### `timeComponent(value: any, options?: DateTimeComponentOptions): mixed`
-Formats a time for the current locale as a component.
-
-#### `numberComponent(value: any, options?: NumberComponentOptions): mixed`
-Formats a number for the current locale.
-
-#### `relativeComponent(value: any, options?: RelativeComponentOptions): mixed`
-Formats a relative time for the current locale as a component, ie: `<span>3 hours ago</span>`.
-
-
 #### `changeLocale(locale: string, options?: intlFormatOptionsType = {}): IntlFmt`
 Returns a new `IntlFmt` instance, applying the defined locale and options.
 The parent `IntlFmt` instance values will be used where no `options` as defined.
 
-### Tags
+## Intl Html Formatter
+
+### _static_ `create(options: createFormatterOpts): IntlFmt`
+A factory method for creating new `IntlFmt` classes that include _custom shorthand method names_.
+
+Many _i18n_ packages use either `_()` or `t()` for formatting translated messages. You can now use this factory method to assign your own shorthand syntax to the `IntlFmt` class.
+
+Define the _createFormatterOpts_:
+  * `message?: string`:  The short method name for `message()`.
+  * `messageElement?: string`: The short method name for `messageElement()`.
+  * `htmlMessage?: string`: The short method name for `htmlMessage()`.
+  * `htmlMessageElement?: string`: The short method name for `htmlMessageElement()`.
+  * `date?: string`: The short method name for `date()`.
+  * `dateElement?: string`: The short method name for `dateElement()`.
+  * `time?: string`: The short method name for `time()`.
+  * `timeElement?: string`: The short method name for `timeElement()`.
+  * `number?: string`: The short method name for `number()`.
+  * `numberElement?: string`: The short method name for `numberElement()`.
+  * `relative?: string`: The short method name for `relative()`.
+  * `relativeElement?: string`: The short method name for `relativeElement()`.
+  * `plural?: string`: The short method name for `plural()`.
+
+Example:
+```js
+import {HtmlFormatter} from 'intl-fmt';
+
+// Create a new Formatter class
+const CustomHtmlFormatter = HtmlFormatter.create({
+  message: 'm',
+  messageElement: 'me',
+  // other options here
+});
+
+// Create a new class instance
+const customFormatter = new CustomHtmlFormatter(locale, options);
+
+// Use the shorthand methods
+console.log(customerFormatter.m({ id: 'msg_id' }));
+console.log(customerFormatter.me({ id: 'msg_id' }));
+
+```
+
+### Constructor `new HtmlFormatter(locale?: string, options: IntlHtmlFormatOptions): IntlFmt`
+
+ * `locale` is optional, but must be defined if providing options
+ * `options` can optionally be provided to modify behavior. Options include:
+   * `initialNow: number` - the time value used for _now_ when rendering dates and times
+   * `defaultLocale: string` - the formatters default locale, defaults to `en`
+   * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
+   * `formats: Object` - custom formats, defaults to `{}`
+   * `messages: { [id]: message }` - translated messages for the specified locale(s)
+   * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
+   * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
+   * `messageBuilderFactory`: The factory used to format `message` output
+   * `defaultHtmlElement: string | (value) => mixed` - A string or function used to format all `*Element()` methods. ie; `span` will result in a formatted component being rendered as `<span>value</span>`.
+   * `htmlElements: { [formatMethodName]: string | (value) => mixed }`: An object of key/value pairs that define the element render configuration for specific formatter(s).
+   * `htmlMessageBuilderFactory`: The factory used to format `messageElement()` output
+   * `htmlElementBuilderFactory`: The factory used to build HTML elements when the `tagName` is a string.
+
+#### `locale(): string`
+Returns the current locale.
+
+#### `now(): number`
+Returns the value being used to represent `now`.
+
+#### `setNow(now?: number): void`
+Sets the value used to represent `now`.
+
+#### `message(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
+Formats a message descriptor using the optionally assigned values.
+
+#### `htmlMessage(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
+Formats a HTML message descriptor using the optionally assigned values.
+_This exists for backwards compatibility only_. Using this method is **not recommended**., use `message()` instead.
+
+#### `date(value: any, options?: DateTimeFormatOptions): string`
+Formats a date for the current locale.
+
+#### `time(value: any, options?: DateTimeFormatOptions): string`
+Formats a time for the current locale.
+
+#### `number(value: any, options?: NumberFormatOptions): string`
+Formats a number for the current locale.
+
+#### `relative(value: any, options?: RelativeFormatOptions): string`
+Formats a relative time for the current locale, ie: `3 hours ago`.
+
+#### `plural(value: any, options?: PluralFormatOptions): string`
+Returns a value indicating the plurality of the value.
+The return value will be one of `zero, one, two, few, many, other`
+
+#### `messageElement(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
+Formats a message descriptor as a component.
+
+#### `htmlMessageElement(msgDescriptor: MessageDescriptor, values?: Object, options?: htmlMessageOptions): mixed`
+Formats a HTML message descriptor as a component.
+
+_This exists for backwards compatibility only_. Using this method is **not recommended**, use `messageComponent()` instead.
+
+#### `dateElement(value: any, options?: DateTimeComponentOptions): mixed`
+Formats a date for the current locale as a component.
+
+#### `timeElement(value: any, options?: DateTimeComponentOptions): mixed`
+Formats a time for the current locale as a component.
+
+#### `numberElement(value: any, options?: NumberComponentOptions): mixed`
+Formats a number for the current locale.
+
+#### `relativeElement(value: any, options?: RelativeComponentOptions): mixed`
+Formats a relative time for the current locale as a component, ie: `<span>3 hours ago</span>`.
+
+#### `changeLocale(locale: string, options?: intlFormatOptionsType = {}): IntlHtmlFmt`
+Returns a new `IntlHtmlFmt` instance, applying the defined locale and options.
+The parent `IntlHtmlFmt` instance values will be used where no `options` as defined.
+
+## Tags
 A `tag` enables style _placeholders_ to be included in the translation message _without_ including any of the
 style information in the translation message.
 

@@ -5,12 +5,22 @@
  */
 
 import allLocaleData from '../locale-data/index';
-import { Formatter, addLocaleData, defineMessages, StringBuilderFactory, ArrayBuilderFactory } from './intl-format';
+import {
+    Formatter,
+    HtmlFormatter,
+    addLocaleData,
+    defineMessages,
+    StringBuilderFactory,
+    ArrayBuilderFactory,
+    HtmlElementBuilder
+} from './intl-format';
 
 export {
     addLocaleData,
     defineMessages,
     Formatter,
+    HtmlFormatter,
+    HtmlElementBuilder,
     StringBuilderFactory,
     ArrayBuilderFactory
 };

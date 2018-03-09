@@ -6,7 +6,7 @@ import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
 import { hasLocaleData } from "./locale-data-registry";
-import {defaultErrorHandler, intlFormatPropNames, shortIntlFuncNames} from "./utils";
+import {defaultErrorHandler, intlFormatPropNames} from "./utils";
 import type {
     relativeOptions,
     pluralFormatOptions,
@@ -14,13 +14,7 @@ import type {
     intlFormatOptionsType,
     numberOptions,
     dateOptions,
-    messageOptions,
-    messageComponentOptions,
-    dateComponentOptions,
-    numberComponentOptions,
-    relativeComponentOptions,
-    htmlMessageOptions,
-    componentOptions
+    messageOptions
 } from "./types";
 
 const defaultMessages = {};
@@ -34,12 +28,7 @@ const defaultOpts = {
     initialNow: null,
 
     requireOther: true,
-    textMessageBuilderFactory: StringBuilderFactory,
-    componentMessageBuilderFactory: StringBuilderFactory,
-
-    defaultComponent: 'span',
-    components: {},
-
+    messageBuilderFactory: StringBuilderFactory,
     onError: defaultErrorHandler,
 
     // Deprecated
@@ -48,16 +37,6 @@ const defaultOpts = {
 };
 
 const optionNames = Object.keys(defaultOpts);
-
-function resolveRenderer(component, defaultComponent) {
-    const renderComponent = component || defaultComponent;
-    if (typeof renderComponent === 'string') {
-        return renderComponent;
-    }
-
-    invariant(typeof renderComponent === 'function', '[Intl Fmt] All optional `components` must be either a string or function.');
-    return renderComponent;
-}
 
 function getFormatFactories() {
     return {
@@ -121,17 +100,11 @@ export default class Formatter {
     static create(options?: Object = {}) {
         const opts = Object.assign({
             message: 'm',
-            messageComponent: 'mc',
             htmlMessage: 'h',
-            htmlMessageComponent: 'hc',
             date: 'd',
-            dateComponent: 'dc',
             time: 't',
-            timeComponent: 'tc',
             number: 'n',
-            numberComponent: 'nc',
             relative: 'r',
-            relativeComponent: 'rc',
             plural: 'p'
         }, options);
 
@@ -163,30 +136,6 @@ export default class Formatter {
             [opts.plural](value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
                 return this.plural(value, options);
             }
-
-            [opts.messageComponent](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageComponentOptions = {}): mixed {
-                return this.messageComponent(messageDescriptor, values, options);
-            }
-
-            [opts.htmlMessageComponent](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: htmlMessageOptions = {}): mixed {
-                return this.htmlMessageComponent(messageDescriptor, values, options);
-            }
-
-            [opts.dateComponent](value: any, options?: dateComponentOptions = {}): string {
-                return this.dateComponent(value, options);
-            }
-
-            [opts.timeComponent](value: any, options?: dateComponentOptions = {}): string {
-                return this.timeComponent(value, options);
-            }
-
-            [opts.numberComponent](value: any, options?: numberComponentOptions = {}): string {
-                return this.numberComponent(value, options);
-            }
-
-            [opts.relativeComponent](value: any, options?: relativeComponentOptions = {}): string {
-                return this.relativeComponent(value, options);
-            }
         }
 
         return CustomFormatter;
@@ -208,25 +157,15 @@ export default class Formatter {
 
         if (!IS_PROD) {
             if (textComponent !== null) {
-                console.warn('[Intl Format] Option `textComponent` will be deprecated in a future version. Use `defaultComponent` instead.');
+                console.warn('[Intl Format] Option `textComponent` has been deprecated, use the `HtmlFormatter` to render HTML elements.');
             }
 
             if (textRenderer !== null) {
-                console.warn('[Intl Format] Option `textRenderer` will be deprecated in a future version. Use `defaultComponent` instead.');
+                console.warn('[Intl Format] Option `textRenderer` has been deprecated, use the `HtmlFormatter` to render HTML elements.');
             }
         }
 
         this._config = getLocaleConfig(locale, configOpts);
-        this._components = shortIntlFuncNames.reduce((acc, fnName) => {
-            if (fnName === 'plural') {
-                return acc;
-            }
-
-            acc[fnName] = resolveRenderer(
-                this._config.components[fnName],
-                this._config.defaultComponent);
-            return acc;
-        }, {});
 
         // Used to stabilize time when performing an initial rendering so that
         // all relative times use the same reference "now" time.
@@ -242,23 +181,6 @@ export default class Formatter {
         };
 
         this._formatters = bindFormatters(this._config, this._formatterState)
-    }
-
-    formatComponent(fnName: string, value: mixed, options?: componentOptions): mixed {
-        const { component, ...opts } = options;
-        return this.renderComponent(
-            component || this._components[fnName],
-            value,
-            { ...opts, formatterName: fnName });
-    }
-
-    // eslint-disable-next-line no-unused-vars
-    renderComponent(component: mixed, value: mixed, opts?: Object): mixed {
-        if (typeof component === 'string') {
-            return `<${component}>${value}</${component}>`;
-        }
-
-        return component(value);
     }
 
     get options() {
@@ -301,7 +223,7 @@ export default class Formatter {
         return this._formatters.formatMessage(
             messageDescriptor,
             values,
-            options.messageBuilderFactory || this._config.textMessageBuilderFactory);
+            options.messageBuilderFactory || this._config.messageBuilderFactory);
     }
 
     htmlMessage(messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
@@ -326,50 +248,5 @@ export default class Formatter {
 
     plural(value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
         return this._formatters.formatPlural(value, options);
-    }
-
-    messageComponent(
-        messageDescriptor: messageDescriptorType,
-        values?: Object = {},
-        options?: messageComponentOptions = {}
-    ): mixed
-    {
-        const { messageBuilderFactory, ...componentOpts } = options;
-        return this.formatComponent(
-            'message',
-            this.message(
-                messageDescriptor,
-                values,
-                { messageBuilderFactory: messageBuilderFactory || this._config.componentMessageBuilderFactory }),
-            componentOpts
-        );
-    }
-
-    htmlMessageComponent(
-        messageDescriptor: messageDescriptorType,
-        values?: Object = {},
-        options?: htmlMessageOptions = {}): mixed
-    {
-        return this.formatComponent('htmlMessage', this.htmlMessage(messageDescriptor, values), options);
-    }
-
-    dateComponent(value: any, options?: dateComponentOptions = {}): mixed {
-        const { component, ...fmtOpts } = options;
-        return this.formatComponent('date', this.date(value, fmtOpts), { component });
-    }
-
-    timeComponent(value: any, options?: dateComponentOptions = {}): mixed {
-        const { component, ...fmtOpts } = options;
-        return this.formatComponent('time', this.time(value, fmtOpts), { component });
-    }
-
-    numberComponent(value: any, options?: numberComponentOptions = {}): mixed {
-        const { component, ...fmtOpts } = options;
-        return this.formatComponent('number', this.number(value, fmtOpts), { component });
-    }
-
-    relativeComponent(value: any, options?: relativeComponentOptions = {}): mixed {
-        const { component, ...fmtOpts } = options;
-        return this.formatComponent('relative', this.relative(value, fmtOpts), { component });
     }
 }

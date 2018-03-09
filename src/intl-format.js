@@ -9,6 +9,7 @@ import defaultLocaleData from './en';
 import {addLocaleData} from './locale-data-registry';
 import {default as defineMessages} from './define-messages';
 import { default as Formatter } from './Formatter';
+import { default as HtmlFormatter, HtmlElementBuilder } from './HtmlFormatter';
 
 addLocaleData(defaultLocaleData);
 
@@ -17,7 +18,9 @@ export {
     defineMessages,
     Formatter,
     StringBuilderFactory,
-    ArrayBuilderFactory
+    ArrayBuilderFactory,
+    HtmlElementBuilder,
+    HtmlFormatter
 };
 
 export default Formatter;

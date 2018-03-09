@@ -71,20 +71,6 @@ describe('Formatter', () => {
             const fmt = new Formatter('__invalid__');
             expect(fmt.locale()).toBe('en');
         });
-
-        it('should throw if defaultComponent is not a function or string', () => {
-            expect(() => new Formatter('en', { defaultComponent: 0 }))
-                .toThrow(/must be either a string or function/);
-
-            expect(() => new Formatter('en', { defaultComponent: new Date() }))
-                .toThrow(/must be either a string or function/);
-
-            expect(() => new Formatter('en', { defaultComponent: {} }))
-                .toThrow(/must be either a string or function/);
-
-            expect(() => new Formatter('en', { defaultComponent: [] }))
-                .toThrow(/must be either a string or function/);
-        });
     });
 
     describe('get options()', () => {
@@ -94,7 +80,7 @@ describe('Formatter', () => {
                 messages: {}
             };
             const fmt = new Formatter('af', opts);
-            expect(Object.keys(fmt.options)).toHaveLength(14);
+            expect(Object.keys(fmt.options)).toHaveLength(11);
         });
     });
 
@@ -317,19 +303,10 @@ describe('Formatter', () => {
 
             it('formats message text using default ArrayBuilderFactory', () => {
                 const {locale, ...opts} = config;
-                fmt = new Formatter(locale, {...opts, textMessageBuilderFactory: ArrayBuilderFactory });
+                fmt = new Formatter(locale, {...opts, messageBuilderFactory: ArrayBuilderFactory });
                 const mf = new IntlMessageFormat(opts.messages.no_args, locale);
 
                 expect(fmt.message({id: 'no_args'})).toEqual(mf.format({}, ArrayBuilderFactory));
-            });
-
-            it('formats a message component using default ArrayBuilderFactory', () => {
-                const {locale, ...opts} = config;
-                fmt = new Formatter(locale, {...opts, componentMessageBuilderFactory: ArrayBuilderFactory });
-                const mf = new IntlMessageFormat(opts.messages.no_args, locale);
-
-                expect(fmt.messageComponent({id: 'no_args'}, {}, { component: (val) => ['<span>', val, '</span>'] }))
-                    .toEqual(['<span>', mf.format({}, ArrayBuilderFactory), '</span>']);
             });
 
             it('formats a message using method ArrayBuilderFactory', () => {
@@ -358,210 +335,6 @@ describe('Formatter', () => {
                 expect(fmt.htmlMessage({id: 'with_html'}, values)).toBe(mf.format(escapedValues));
             });
         });
-
-        describe('`defaultComponent` function option', () => {
-            let renderMethodFn;
-
-            beforeEach(() => {
-                renderMethodFn = jest.fn((txt) => `!${txt}!`);
-                const { locale, ...formatterOpts } = config;
-                fmt = new Formatter(locale, {...formatterOpts,
-                    defaultComponent: renderMethodFn
-                });
-            });
-
-            it('formats a message', () => {
-                expect(fmt.messageComponent({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a htmlMessage', () => {
-                expect(fmt.htmlMessageComponent({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a date', () => {
-                const df = new Intl.DateTimeFormat(config.locale);
-                const now = new Date().getTime();
-
-                expect(fmt.dateComponent(now)).toBe(`!${df.format(now)}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a time', () => {
-                const df = new Intl.DateTimeFormat(config.locale, {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                });
-                const now = new Date().getTime();
-
-                expect(fmt.timeComponent(now)).toBe(`!${df.format(now)}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a relative value', () => {
-                const now = new Date().getTime();
-                expect(fmt.relativeComponent(now)).toBe(`!now!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a number', () => {
-                expect(fmt.numberComponent(1)).toBe(`!1!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-        });
-
-        describe('`components.*` function options', () => {
-            let renderMethodFn;
-
-            beforeEach(() => {
-                renderMethodFn = jest.fn((txt) => `!${txt}!`);
-                const { locale, ...formatterOpts } = config;
-                fmt = new Formatter(locale, {...formatterOpts,
-                    components: {
-                        message: renderMethodFn,
-                        htmlMessage: renderMethodFn,
-                        date: renderMethodFn,
-                        time: renderMethodFn,
-                        number: renderMethodFn,
-                        relative: renderMethodFn,
-                    }
-                });
-            });
-
-            it('formats a message', () => {
-                expect(fmt.messageComponent({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a htmlMessage', () => {
-                expect(fmt.htmlMessageComponent({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a date', () => {
-                const df = new Intl.DateTimeFormat(config.locale);
-                const now = new Date().getTime();
-
-                expect(fmt.dateComponent(now)).toBe(`!${df.format(now)}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a time', () => {
-                const df = new Intl.DateTimeFormat(config.locale, {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                });
-                const now = new Date().getTime();
-
-                expect(fmt.timeComponent(now)).toBe(`!${df.format(now)}!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a relative value', () => {
-                const now = new Date().getTime();
-                expect(fmt.relativeComponent(now)).toBe(`!now!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-
-            it('formats a number', () => {
-                expect(fmt.numberComponent(1)).toBe(`!1!`);
-                expect(renderMethodFn.mock.calls).toHaveLength(1);
-            });
-        });
-
-        describe('`defaultComponent` string option', () => {
-            beforeEach(() => {
-                const { locale, ...formatterOpts } = config;
-                fmt = new Formatter(locale, {...formatterOpts,
-                    defaultComponent: 'span'
-                });
-            });
-
-            it('formats a message', () => {
-                expect(fmt.messageComponent({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
-            });
-
-            it('formats a htmlMessage', () => {
-                expect(fmt.htmlMessageComponent({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
-            });
-
-            it('formats a date', () => {
-                const df = new Intl.DateTimeFormat(config.locale);
-                const now = new Date().getTime();
-
-                expect(fmt.dateComponent(now)).toBe(`<span>${df.format(now)}</span>`);
-            });
-
-            it('formats a time', () => {
-                const df = new Intl.DateTimeFormat(config.locale, {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                });
-                const now = new Date().getTime();
-
-                expect(fmt.timeComponent(now)).toBe(`<span>${df.format(now)}</span>`);
-            });
-
-            it('formats a relative value', () => {
-                const now = new Date().getTime();
-                expect(fmt.relativeComponent(now)).toBe(`<span>now</span>`);
-            });
-
-            it('formats a number', () => {
-                expect(fmt.numberComponent(1)).toBe(`<span>1</span>`);
-            });
-        });
-
-        describe('`components.*` string options', () => {
-            beforeEach(() => {
-                const { locale, ...formatterOpts } = config;
-                fmt = new Formatter(locale, {...formatterOpts,
-                    components: {
-                        message: 'span',
-                        htmlMessage: 'span',
-                        date: 'span',
-                        time: 'span',
-                        number: 'span',
-                        relative: 'span',
-                    }
-                });
-            });
-
-            it('formats a message', () => {
-                expect(fmt.messageComponent({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
-            });
-
-            it('formats a htmlMessage', () => {
-                expect(fmt.htmlMessageComponent({id: 'no_args'})).toBe(`<span>${config.messages.no_args}</span>`);
-            });
-
-            it('formats a date', () => {
-                const df = new Intl.DateTimeFormat(config.locale);
-                const now = new Date().getTime();
-
-                expect(fmt.dateComponent(now)).toBe(`<span>${df.format(now)}</span>`);
-            });
-
-            it('formats a time', () => {
-                const df = new Intl.DateTimeFormat(config.locale, {
-                    hour: 'numeric',
-                    minute: 'numeric',
-                });
-                const now = new Date().getTime();
-
-                expect(fmt.timeComponent(now)).toBe(`<span>${df.format(now)}</span>`);
-            });
-
-            it('formats a relative value', () => {
-                const now = new Date().getTime();
-                expect(fmt.relativeComponent(now)).toBe(`<span>now</span>`);
-            });
-
-            it('formats a number', () => {
-                expect(fmt.numberComponent(1)).toBe(`<span>1</span>`);
-            });
-        });
     });
 
     describe('create', () => {
@@ -574,38 +347,20 @@ describe('Formatter', () => {
             expect(customFormatter.m).toBeDefined();
             expect(customFormatter.m({id: 'no_args'})).toBe(customFormatter.message({id: 'no_args'}));
 
-            expect(customFormatter.mc).toBeDefined();
-            expect(customFormatter.mc({id: 'no_args'})).toBe(customFormatter.messageComponent({id: 'no_args'}));
-
             expect(customFormatter.h).toBeDefined();
             expect(customFormatter.h({id: 'no_args'})).toBe(customFormatter.htmlMessage({id: 'no_args'}));
-
-            expect(customFormatter.hc).toBeDefined();
-            expect(customFormatter.hc({id: 'no_args'})).toBe(customFormatter.htmlMessageComponent({id: 'no_args'}));
 
             expect(customFormatter.d).toBeDefined();
             expect(customFormatter.d(now)).toBe(customFormatter.date(now));
 
-            expect(customFormatter.dc).toBeDefined();
-            expect(customFormatter.dc(now)).toBe(customFormatter.dateComponent(now));
-
             expect(customFormatter.t).toBeDefined();
             expect(customFormatter.t(now)).toBe(customFormatter.time(now));
-
-            expect(customFormatter.tc).toBeDefined();
-            expect(customFormatter.tc(now)).toBe(customFormatter.timeComponent(now));
 
             expect(customFormatter.n).toBeDefined();
             expect(customFormatter.n(0)).toBe(customFormatter.number(0));
 
-            expect(customFormatter.nc).toBeDefined();
-            expect(customFormatter.nc(0)).toBe(customFormatter.numberComponent(0));
-
             expect(customFormatter.r).toBeDefined();
             expect(customFormatter.r(0)).toBe(customFormatter.relative(0));
-
-            expect(customFormatter.rc).toBeDefined();
-            expect(customFormatter.rc(0)).toBe(customFormatter.relativeComponent(0));
 
             expect(customFormatter.p).toBeDefined();
             expect(customFormatter.p(1)).toBe(customFormatter.plural(1));
