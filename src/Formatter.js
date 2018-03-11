@@ -144,7 +144,7 @@ export default class Formatter {
     constructor(locale: string = 'en', options?: intlFormatOptionsType = {}) {
         invariant(
             typeof Intl !== 'undefined',
-            '[Intl Fmt] The `Intl` APIs must be available in the runtime, ' +
+            '[Intl Format] The `Intl` APIs must be available in the runtime, ' +
             'and do not appear to be built-in. An `Intl` polyfill should be loaded.\n' +
             'See: http://formatjs.io/guides/runtime-environments/'
         );
@@ -199,10 +199,14 @@ export default class Formatter {
             return newOpts;
         }, {});
 
-        return new Formatter(locale, {
+        return this.newInstance(locale, {
             ...newOpts,
             formatFactories
         });
+    }
+
+    newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
+        return new Formatter(locale, options);
     }
 
     locale() {
@@ -220,10 +224,13 @@ export default class Formatter {
     }
 
     message(messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
+        const ctxFactory = options.messageBuilderContextFactory || this._config.messageBuilderContextFactory;
         return this._formatters.formatMessage(
             messageDescriptor,
-            values,
-            options.messageBuilderFactory || this._config.messageBuilderFactory);
+            values, {
+                messageBuilderFactory: options.messageBuilderFactory || this._config.messageBuilderFactory,
+                messageBuilderContext: typeof ctxFactory === 'function' ? ctxFactory(messageDescriptor.id) : undefined
+            });
     }
 
     htmlMessage(messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {

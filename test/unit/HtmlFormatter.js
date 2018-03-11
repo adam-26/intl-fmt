@@ -1,5 +1,7 @@
 import {ArrayBuilderFactory} from 'tag-messageformat';
 import HtmlFormatter from '../../src/HtmlFormatter';
+import IntlMessageFormat from "tag-messageformat";
+import Formatter from "../../src/Formatter";
 
 describe('HtmlFormatter', () => {
     let config;
@@ -37,6 +39,14 @@ describe('HtmlFormatter', () => {
             };
             const fmt = new HtmlFormatter('af', opts);
             expect(Object.keys(fmt.options)).toHaveLength(15);
+        });
+    });
+
+    describe('changeLocale', () => {
+        it('should return a IntlFormatter instance', () => {
+            const fmt = new HtmlFormatter();
+            const newFmt = fmt.changeLocale('en');
+            expect(newFmt instanceof HtmlFormatter).toBe(true);
         });
     });
 
@@ -294,6 +304,44 @@ describe('HtmlFormatter', () => {
 
             it('formats a number', () => {
                 expect(fmt.numberElement(1)).toBe(`<span>1</span>`);
+            });
+        });
+
+        describe('messageBuilderContextFactory option', () => {
+            let TestContext, mockId, mockMessage, mockFormatted;
+            beforeEach(() => {
+                TestContext = function () {};
+                mockId = TestContext.prototype.id = jest.fn();
+                mockMessage = TestContext.prototype.message = jest.fn();
+                mockFormatted = TestContext.prototype.formatted = jest.fn(msg => msg);
+            });
+
+            it('formats message text using formatter message builder context', () => {
+                const {locale, ...opts} = config;
+                const ctx = new TestContext();
+                fmt = new Formatter(locale, {
+                    ...opts,
+                    messageBuilderContextFactory: (id) => { ctx.id(id); return ctx; }});
+                const mf = new IntlMessageFormat(opts.messages.no_args, locale);
+
+                expect(fmt.message({id: 'no_args'})).toEqual(mf.format());
+                expect(mockId.mock.calls).toHaveLength(1);
+                expect(mockId.mock.calls[0][0]).toEqual('no_args');
+                expect(mockMessage.mock.calls).toHaveLength(1);
+                expect(mockFormatted.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a message using method message builder context', () => {
+                const {locale, messages} = config;
+                const mf = new IntlMessageFormat(messages.no_args, locale);
+
+                const ctx = new TestContext();
+                expect(fmt.message({id: 'no_args'}, {}, { messageBuilderContextFactory: (id) => { ctx.id(id); return ctx; } }))
+                    .toEqual(mf.format());
+                expect(mockId.mock.calls).toHaveLength(1);
+                expect(mockId.mock.calls[0][0]).toEqual('no_args');
+                expect(mockMessage.mock.calls).toHaveLength(1);
+                expect(mockFormatted.mock.calls).toHaveLength(1);
             });
         });
     });

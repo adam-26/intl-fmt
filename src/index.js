@@ -15,6 +15,8 @@ import {
     HtmlElementBuilder
 } from './intl-format';
 
+addLocaleData(allLocaleData);
+
 export {
     addLocaleData,
     defineMessages,
@@ -26,5 +28,3 @@ export {
 };
 
 export default Formatter;
-
-addLocaleData(allLocaleData);

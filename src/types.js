@@ -12,6 +12,11 @@ export type messageBuilderType = {
     build: () => mixed;
 };
 
+export type messageBuilderContextType = {
+    message: (msg: mixed) => void,
+    formatted: (msg: mixed) => mixed
+};
+
 export type htmlElementType = string | (text: string) => mixed;
 
 export type intlFormatOptionsType = {
@@ -25,6 +30,7 @@ export type intlFormatOptionsType = {
 
     // message builders
     messageBuilderFactory: () => messageBuilderType,
+    messageBuilderContextFactory: () => messageBuilderContextType,
 
     onError?: (message: string, exception?: Error) => void,
 
@@ -67,6 +73,7 @@ export type intlHtmlFormatOptionsType = {
 export type htmlElementOptions = {
     tagName?: htmlElementType,
     htmlMessageBuilderFactory?: () => messageBuilderType,
+    htmlMessageBuilderContextFactory?: () => messageBuilderContextType,
     htmlElementBuilderFactory?: () => htmlElementBuilderType
 };
 
@@ -129,6 +136,7 @@ export type pluralFormatOptions = {
 
 export type messageOptions = {
     messageBuilderFactory?: () => messageBuilderType,
+    messageBuilderContextFactory?: () => messageBuilderContextType
 };
 
 export type messageElementOptions = {

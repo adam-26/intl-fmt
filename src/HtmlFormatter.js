@@ -17,7 +17,7 @@ import type {
     pluralFormatOptions,
     relativeElementOptions,
     relativeOptions,
-    intlHtmlFormatOptionsType
+    intlHtmlFormatOptionsType, intlFormatOptionsType
 } from "./types";
 
 function HtmlElementBuilderFactory() {
@@ -168,6 +168,10 @@ export default class HtmlFormatter extends Formatter {
             { ...opts, formatterName: fnName });
     }
 
+    newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
+        return new HtmlFormatter(locale, options);
+    }
+
     // eslint-disable-next-line no-unused-vars
     renderElement(element: mixed, value: mixed, opts?: Object): mixed {
         const { htmlElementBuilderFactory, ...htmlOpts } = opts;
@@ -189,13 +193,16 @@ export default class HtmlFormatter extends Formatter {
         options?: messageElementOptions = {}
     ): mixed
     {
-        const { messageBuilderFactory, ...elementOpts } = options;
+        const { messageBuilderFactory, messageBuilderContextFactory, ...elementOpts } = options;
+        const ctxFactory = messageBuilderContextFactory || this.options.htmlMessageBuilderContextFactory;
         return this._formatElement(
             'message',
             this.message(
                 messageDescriptor,
-                values,
-                { messageBuilderFactory: messageBuilderFactory || this.options.htmlMessageBuilderFactory }),
+                values, {
+                    messageBuilderFactory: messageBuilderFactory || this.options.htmlMessageBuilderFactory,
+                    messageBuilderContext: typeof ctxFactory === 'function' ? ctxFactory(messageDescriptor.id) : undefined
+                }),
             elementOpts
         );
     }
