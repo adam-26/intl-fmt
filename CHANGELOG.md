@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.5.0"></a>
+# [3.5.0](https://github.com/adam-26/intl-format/compare/v3.4.3...v3.5.0) (2018-03-11)
+
+
+### Features
+
+* **code:** Update `message()` API ([e6d0d29](https://github.com/adam-26/intl-format/commit/e6d0d29))
+* **code:** Update `message()` API  ([#10](https://github.com/adam-26/intl-format/issues/10)) ([f158e47](https://github.com/adam-26/intl-format/commit/f158e47))
+
+
+
 <a name="3.4.0"></a>
 # [3.4.0](https://github.com/adam-26/intl-format/compare/v3.3.0...v3.4.0) (2018-03-09)
 
