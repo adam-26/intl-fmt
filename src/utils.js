@@ -25,9 +25,9 @@ export function escape(str) {
 
 export function filterProps(props, whitelist, defaults = {}) {
   return whitelist.reduce((filtered, name) => {
-    if (props.hasOwnProperty(name)) {
+    if (props.hasOwnProperty(name) && typeof props[name] !== 'undefined') {
       filtered[name] = props[name];
-    } else if (defaults.hasOwnProperty(name)) {
+    } else if (defaults.hasOwnProperty(name) && typeof defaults[name] !== 'undefined') {
       filtered[name] = defaults[name];
     }
 
@@ -61,7 +61,6 @@ export const intlFormatPropNames = [
 ];
 
 export const dateTimeFormatPropNames = [
-  'format',
   'localeMatcher',
   'formatMatcher',
   'timeZone',
@@ -78,7 +77,6 @@ export const dateTimeFormatPropNames = [
 ];
 
 export const numberFormatPropNames = [
-  'format',
   'localeMatcher',
   'style',
   'currency',
@@ -92,7 +90,6 @@ export const numberFormatPropNames = [
 ];
 
 export const relativeFormatPropNames = [
-  'format',
   'style',
   'units'
 ];

@@ -71,6 +71,22 @@ describe('Formatter', () => {
             const fmt = new Formatter('__invalid__');
             expect(fmt.locale()).toBe('en');
         });
+
+        it('throws when `Intl` is missing from runtime', () => {
+            try {
+                global.Intl = global.Intl;
+            } catch (e) {
+                // can not test when global.Intl is immutable
+                return;
+            }
+
+            const globalIntl = global.Intl;
+            global.Intl = undefined;
+            expect(() => new Formatter()).toThrow(
+                '[Intl Format] The `Intl` APIs must be available in the runtime, and do not appear to be built-in. An `Intl` polyfill should be loaded.'
+            );
+            global.Intl = globalIntl;
+        });
     });
 
     describe('get options()', () => {
@@ -94,6 +110,11 @@ describe('Formatter', () => {
 
         it('should throw if locale not provided', () => {
             expect(() => fmt.changeLocale()).toBeDefined();
+        });
+
+        it('should return a IntlFormatter instance', () => {
+            const newFmt = fmt.changeLocale('en');
+            expect(newFmt instanceof Formatter).toBe(true);
         });
 
         it('should change the current locale', () => {
@@ -301,20 +322,60 @@ describe('Formatter', () => {
                 expect(fmt.message({id: 'with_arg'}, values)).toBe(mf.format(values));
             });
 
-            it('formats message text using default ArrayBuilderFactory', () => {
-                const {locale, ...opts} = config;
-                fmt = new Formatter(locale, {...opts, messageBuilderFactory: ArrayBuilderFactory });
-                const mf = new IntlMessageFormat(opts.messages.no_args, locale);
+            describe('messageBuilderFactory option', () => {
+                it('formats message text using default ArrayBuilderFactory', () => {
+                    const {locale, ...opts} = config;
+                    fmt = new Formatter(locale, {...opts, messageBuilderFactory: ArrayBuilderFactory});
+                    const mf = new IntlMessageFormat(opts.messages.no_args, locale);
 
-                expect(fmt.message({id: 'no_args'})).toEqual(mf.format({}, ArrayBuilderFactory));
+                    expect(fmt.message({id: 'no_args'})).toEqual(mf.format({}, {messageBuilderFactory: ArrayBuilderFactory}));
+                });
+
+                it('formats a message using method ArrayBuilderFactory', () => {
+                    const {locale, messages} = config;
+                    const mf = new IntlMessageFormat(messages.no_args, locale);
+
+                    expect(fmt.message({id: 'no_args'}, {}, {messageBuilderFactory: ArrayBuilderFactory}))
+                        .toEqual(mf.format({}, {messageBuilderFactory: ArrayBuilderFactory}));
+                });
             });
 
-            it('formats a message using method ArrayBuilderFactory', () => {
-                const {locale, messages} = config;
-                const mf = new IntlMessageFormat(messages.no_args, locale);
+            describe('messageBuilderContextFactory option', () => {
+                let TestContext, mockId, mockMessage, mockFormatted;
+                beforeEach(() => {
+                    TestContext = function () {};
+                    mockId = TestContext.prototype.id = jest.fn();
+                    mockMessage = TestContext.prototype.message = jest.fn();
+                    mockFormatted = TestContext.prototype.formatted = jest.fn(msg => msg);
+                });
 
-                expect(fmt.message({id: 'no_args'}, {}, { messageBuilderFactory: ArrayBuilderFactory }))
-                    .toEqual(mf.format({}, ArrayBuilderFactory));
+                it('formats message text using formatter message builder context', () => {
+                    const {locale, ...opts} = config;
+                    const ctx = new TestContext();
+                    fmt = new Formatter(locale, {
+                        ...opts,
+                        messageBuilderContextFactory: (id) => { ctx.id(id); return ctx; }});
+                    const mf = new IntlMessageFormat(opts.messages.no_args, locale);
+
+                    expect(fmt.message({id: 'no_args'})).toEqual(mf.format());
+                    expect(mockId.mock.calls).toHaveLength(1);
+                    expect(mockId.mock.calls[0][0]).toEqual('no_args');
+                    expect(mockMessage.mock.calls).toHaveLength(1);
+                    expect(mockFormatted.mock.calls).toHaveLength(1);
+                });
+
+                it('formats a message using method message builder context', () => {
+                    const {locale, messages} = config;
+                    const mf = new IntlMessageFormat(messages.no_args, locale);
+
+                    const ctx = new TestContext();
+                    expect(fmt.message({id: 'no_args'}, {}, { messageBuilderContextFactory: (id) => { ctx.id(id); return ctx; } }))
+                        .toEqual(mf.format());
+                    expect(mockId.mock.calls).toHaveLength(1);
+                    expect(mockId.mock.calls[0][0]).toEqual('no_args');
+                    expect(mockMessage.mock.calls).toHaveLength(1);
+                    expect(mockFormatted.mock.calls).toHaveLength(1);
+                });
             });
         });
 

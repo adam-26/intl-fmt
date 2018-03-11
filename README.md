@@ -12,6 +12,8 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 > This is a fork of [react-intl](https://github.com/yahoo/react-intl).
 
+> [Read about the inspiration for this fork in the original react-intl issue discussing tags here.](https://github.com/yahoo/react-intl/issues/513)
+
 > It uses the same well tested code to expose an internationalization API **without any React dependencies**
 
 > It add supports for `Tags` in translation messages: "please <x:link>click here</x:link>"
@@ -20,6 +22,8 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 > You _may_ need to set the `requireOther: false` option for backward compatibility if your ICU complex messages are missing the _other_ option.
 
+#### Using React?
+Use **[react-intl-fmt](https://github.com/adam-26/react-intl-format)**, _the API is compatible with [react-intl](https://github.com/yahoo/react-intl)_.
 
 ### Features
 
@@ -188,7 +192,8 @@ console.log(customerFormatter.m({ id: 'msg_id' }));
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
    * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
-   * `messageBuilderFactory`: The factory used to format `message` output
+   * `messageBuilderFactory`: The factory used to create `MessageBuilder` instances used to format `message()` output
+   * `messageBuilderContextFactory`: The factory used to create `MessageBuilderContext` instances, passed to each `MessageBuilder`.
 
 #### `locale(): string`
 Returns the current locale.
@@ -280,6 +285,7 @@ console.log(customerFormatter.me({ id: 'msg_id' }));
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
    * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
    * `messageBuilderFactory`: The factory used to format `message` output
+   * `messageBuilderContextFactory`: The factory used to create `MessageBuilderContext` instances, passed to each `MessageBuilder`.
    * `defaultHtmlElement: string | (value) => mixed` - A string or function used to format all `*Element()` methods. ie; `span` will result in a formatted component being rendered as `<span>value</span>`.
    * `htmlElements: { [formatMethodName]: string | (value) => mixed }`: An object of key/value pairs that define the element render configuration for specific formatter(s).
    * `htmlMessageBuilderFactory`: The factory used to format `messageElement()` output

@@ -2,21 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-<a name="3.4.3"></a>
-## [3.4.3](https://github.com/adam-26/intl-format/compare/v3.4.0...v3.4.3) (2018-03-09)
-
-
-### Bug Fixes
-
-* **code:** format options ([d69f0bd](https://github.com/adam-26/intl-format/commit/d69f0bd))
-* **code:** format options ([#7](https://github.com/adam-26/intl-format/issues/7)) ([f1b6423](https://github.com/adam-26/intl-format/commit/f1b6423))
-* **release:** Bump minor ([48b07b6](https://github.com/adam-26/intl-format/commit/48b07b6))
-* **release:** Bump minor  ([#8](https://github.com/adam-26/intl-format/issues/8)) ([2ef0703](https://github.com/adam-26/intl-format/commit/2ef0703))
-* **release:** Bump version ([90ebdce](https://github.com/adam-26/intl-format/commit/90ebdce))
-* **release:** Bump version ([#9](https://github.com/adam-26/intl-format/issues/9)) ([d55a161](https://github.com/adam-26/intl-format/commit/d55a161))
-
-
-
 <a name="3.4.0"></a>
 # [3.4.0](https://github.com/adam-26/intl-format/compare/v3.3.0...v3.4.0) (2018-03-09)
 
