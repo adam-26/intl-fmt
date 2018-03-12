@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.8.0"></a>
+# [3.8.0](https://github.com/adam-26/intl-format/compare/v3.7.2...v3.8.0) (2018-03-12)
+
+
+### Features
+
+* **code:** initialNow prop accepts a function ([f132473](https://github.com/adam-26/intl-format/commit/f132473))
+* **code:** initialNow prop accepts a function ([#15](https://github.com/adam-26/intl-format/issues/15)) ([32b42f6](https://github.com/adam-26/intl-format/commit/32b42f6))
+
+
+
 <a name="3.7.2"></a>
 ## [3.7.2](https://github.com/adam-26/intl-format/compare/v3.7.1...v3.7.2) (2018-03-12)
 
