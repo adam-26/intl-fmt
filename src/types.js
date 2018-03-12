@@ -170,7 +170,7 @@ export type formatNumberComponentType = (value: any, options?: numberElementOpti
 
 export type IntlFormat = {
     now: () => number,
-    setNow: (initialNow: number) => void,
+    setNow: (initialNow: number | () => number) => void,
     changeLocale: changeLocaleType,
 
     // Backward compatibility

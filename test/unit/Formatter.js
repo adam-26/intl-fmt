@@ -166,6 +166,11 @@ describe('Formatter', () => {
             expect(fmt.now()).toBe(1);
         });
 
+        it('should accept a function', () => {
+            fmt.setNow(() => 1234);
+            expect(fmt.now()).toBe(1234);
+        });
+
         it('should set to now', (done) => {
             const currentNow = fmt.now();
             setTimeout(() => {
