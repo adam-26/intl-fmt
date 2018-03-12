@@ -217,10 +217,12 @@ export default class Formatter {
         return typeof this._initialNow === 'function' ? this._initialNow() : this._initialNow;
     }
 
-    setNow(initialNow?: number): void {
-        this._initialNow = (typeof initialNow === 'number' && isFinite(initialNow)) ?
-            Number(initialNow) :
-            () => new Date().getTime();
+    setNow(initialNow?: number | () => number): void {
+        this._initialNow = typeof initialNow === 'function' ?
+            initialNow :
+            (typeof initialNow === 'number' && isFinite(initialNow)) ?
+                Number(initialNow) :
+                () => new Date().getTime();
     }
 
     message(messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {

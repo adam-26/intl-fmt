@@ -187,7 +187,7 @@ console.log(customerFormatter.m({ id: 'msg_id' }));
 
  * `locale` is optional, but must be defined if providing options
  * `options` can optionally be provided to modify behavior. Options include:
-   * `initialNow: number` - the time value used for _now_ when rendering dates and times
+   * `initialNow: number | () => number` - the time value used for _now_ when rendering dates and times
    * `defaultLocale: string` - the formatters default locale, defaults to `en`
    * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
    * `formats: Object` - custom formats, defaults to `{}`
@@ -280,7 +280,7 @@ console.log(customerFormatter.me({ id: 'msg_id' }));
 
  * `locale` is optional, but must be defined if providing options
  * `options` can optionally be provided to modify behavior. Options include:
-   * `initialNow: number` - the time value used for _now_ when rendering dates and times
+   * `initialNow: number | () => number` - the time value used for _now_ when rendering dates and times
    * `defaultLocale: string` - the formatters default locale, defaults to `en`
    * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
    * `formats: Object` - custom formats, defaults to `{}`
