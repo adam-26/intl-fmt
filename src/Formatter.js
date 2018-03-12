@@ -1,7 +1,7 @@
 // @flow
 import memoizeIntlConstructor from "intl-format-cache";
 import IntlRelativeFormat from "tag-relativeformat";
-import IntlMessageFormat, {StringBuilderFactory} from 'tag-messageformat';
+import IntlMessageFormat, {StringBuilderFactory, BuilderContext} from 'tag-messageformat';
 import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
@@ -224,12 +224,16 @@ export default class Formatter {
     }
 
     message(messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
-        const ctxFactory = options.messageBuilderContextFactory || this._config.messageBuilderContextFactory;
+        const {messageBuilderFactory, messageBuilderContextFactory} = options;
+        const ctxFactory = messageBuilderContextFactory || this._config.messageBuilderContextFactory;
+
         return this._formatters.formatMessage(
             messageDescriptor,
             values, {
-                messageBuilderFactory: options.messageBuilderFactory || this._config.messageBuilderFactory,
-                messageBuilderContext: typeof ctxFactory === 'function' ? ctxFactory(messageDescriptor.id) : undefined
+                messageBuilderFactory: messageBuilderFactory || this._config.messageBuilderFactory,
+                messageBuilderContext: typeof ctxFactory === 'function' ?
+                    ctxFactory(messageDescriptor.id) :
+                    new BuilderContext()
             });
     }
 

@@ -715,6 +715,21 @@ describe('format API', () => {
             expect(consoleError.calls.length).toBe(0);
         });
 
+        it('formats message using assigned StringFormat instance', () => {
+            function SimpleStringFormat(id) { this.id = id; }
+            SimpleStringFormat.prototype.format = function () { return 'world'; };
+            function SimpleStringFormatFactory(id) { return new SimpleStringFormat(id); }
+
+            const {locale, messages} = config;
+            formatMessage = f.formatMessage.bind(null, { ...config, stringFormatFactory: SimpleStringFormatFactory }, state);
+            const mf = new IntlMessageFormat(messages.with_arg, locale, {}, {
+                stringFormatFactory: SimpleStringFormatFactory
+            });
+
+            expect(mf.format({name: 'bob'})).toBe('Hello, world!');
+            expect(formatMessage({id: 'with_arg'}, {name: 'bob'})).toBe(mf.format({name: 'bob'}));
+        });
+
         it('formats basic messages', () => {
             const {locale, messages} = config;
             const mf = new IntlMessageFormat(messages.no_args, locale);

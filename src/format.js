@@ -178,7 +178,7 @@ export function formatMessage(
   values = {},
   formatOptions = {}
 ) {
-  const {locale, formats, messages, defaultLocale, defaultFormats, requireOther, onError} = config;
+  const {locale, formats, messages, defaultLocale, defaultFormats, requireOther, stringFormatFactory, onError} = config;
 
   const {id, defaultMessage} = messageDescriptor;
 
@@ -195,10 +195,14 @@ export function formatMessage(
   }
 
   let formattedMessage;
+  const formatterOpts = {
+      requireOther: requireOther,
+      stringFormatFactory: stringFormatFactory
+  };
 
   if (message) {
     try {
-      let formatter = state.getMessageFormat(message, locale, formats, { requireOther: requireOther });
+      let formatter = state.getMessageFormat(message, locale, formats, formatterOpts);
       formattedMessage = formatter.format(values, formatOptions);
     } catch (e) {
       if (!IS_PROD) {
@@ -231,7 +235,7 @@ export function formatMessage(
         defaultMessage,
         defaultLocale,
         defaultFormats,
-        { requireOther: requireOther }
+        formatterOpts
       );
 
       formattedMessage = formatter.format(values, formatOptions);

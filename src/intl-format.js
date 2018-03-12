@@ -4,23 +4,32 @@
  * See the accompanying LICENSE file for terms.
  */
 
-import {StringBuilderFactory, ArrayBuilderFactory} from 'tag-messageformat';
 import defaultLocaleData from './en';
 import {addLocaleData} from './locale-data-registry';
 import {default as defineMessages} from './define-messages';
-import { default as Formatter } from './Formatter';
-import { default as HtmlFormatter, HtmlElementBuilder } from './HtmlFormatter';
+import {default as Formatter} from './Formatter';
+import {default as HtmlFormatter, HtmlElementBuilder} from './HtmlFormatter';
+import {
+    StringBuilderFactory,
+    ArrayBuilderFactory,
+    BuilderContext,
+    StringFormat,
+    StringFormatFactory
+} from 'tag-messageformat';
 
 addLocaleData(defaultLocaleData);
 
 export {
+    Formatter,
+    HtmlFormatter,
     addLocaleData,
     defineMessages,
-    Formatter,
     StringBuilderFactory,
     ArrayBuilderFactory,
-    HtmlElementBuilder,
-    HtmlFormatter
+    BuilderContext,
+    StringFormat,
+    StringFormatFactory,
+    HtmlElementBuilder
 };
 
 export default Formatter;

@@ -17,6 +17,11 @@ export type messageBuilderContextType = {
     formatted: (msg: mixed) => mixed
 };
 
+export type stringFormatType = {
+    format: (value: any) => mixed,
+    formatValue: (value: mixed) => mixed,
+};
+
 export type htmlElementType = string | (text: string) => mixed;
 
 export type intlFormatOptionsType = {
@@ -24,7 +29,8 @@ export type intlFormatOptionsType = {
     formats?: Object,
     defaultLocale?: string,
     defaultFormats?: Object,
-    requireOther: true,
+    requireOther: boolean,
+    stringFormatFactory?: () => stringFormatType,
     formatFactories?: Object,
     initialNow?: number | () => number,
 
