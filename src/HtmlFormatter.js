@@ -1,9 +1,9 @@
 // @flow
 
 import Formatter from "./Formatter";
-import {shortIntlFuncNames} from "./utils";
+import {shortIntlFuncNames, builderContextFactory} from "./utils";
 import invariant from "invariant";
-import {StringBuilderFactory} from "tag-messageformat";
+import {stringBuilderFactory} from "tag-messageformat";
 import type {
     htmlElementOptions,
     dateElementOptions,
@@ -53,7 +53,7 @@ export class HtmlElementBuilder {
 
 const defaultOpts = {
     htmlElementBuilderFactory: HtmlElementBuilderFactory,
-    htmlMessageBuilderFactory: StringBuilderFactory,
+    htmlMessageBuilderFactory: stringBuilderFactory,
     defaultHtmlElement: 'span',
     htmlElements: {},
 };
@@ -194,14 +194,16 @@ export default class HtmlFormatter extends Formatter {
     ): mixed
     {
         const { messageBuilderFactory, messageBuilderContextFactory, ...elementOpts } = options;
-        const ctxFactory = messageBuilderContextFactory || this.options.htmlMessageBuilderContextFactory;
+        const ctxFactory = messageBuilderContextFactory || this.options.htmlMessagebuilderContextFactory;
         return this._formatElement(
             'message',
             this.message(
                 messageDescriptor,
                 values, {
                     messageBuilderFactory: messageBuilderFactory || this.options.htmlMessageBuilderFactory,
-                    messageBuilderContext: typeof ctxFactory === 'function' ? ctxFactory(messageDescriptor.id) : undefined
+                    messageBuilderContext: typeof ctxFactory === 'function' ?
+                        ctxFactory(messageDescriptor.id) :
+                        builderContextFactory()
                 }),
             elementOpts
         );

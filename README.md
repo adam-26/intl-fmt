@@ -111,8 +111,10 @@ const fmt = new IntlFmt(locale, fmtOpts);
  * `HtmlFormatter`: IntlHtmlFormatter - A formatter with additional methods for rendering formatted text as HTML elements
  * `addLocaleData: function`: Used to add additional locale data into the current environment
  * `defineMessages: function`: A utility method for provide a hook to babel plugins to messages at build time
- * `StringBuilderFactory`: The default factory method used to format `message` strings
- * `ArrayBuilderFactory`: An alternative factory method that can be used to return formatted `message` strings as arrays
+ * `stringBuilderFactory`: The default factory method used to format `message` strings
+ * `arrayBuilderFactory`: An alternative factory method that can be used to return formatted `message` strings as arrays
+ * `stringFormatFactory`: The default factory method for formatting message argument values
+ * `builderContextFactory`: The default factory for creating builder context instances
 
 ### Locale Data
 
@@ -192,6 +194,7 @@ console.log(customerFormatter.m({ id: 'msg_id' }));
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
    * `onError: (message: string, exception?: Error) => void`: A function to log errors, defaults writing to `console.error`
+   * `stringFormatFactory`: The factory used to create `StringFormat` instances used to format message argument values
    * `messageBuilderFactory`: The factory used to create `MessageBuilder` instances used to format `message()` output
    * `messageBuilderContextFactory`: The factory used to create `MessageBuilderContext` instances, passed to each `MessageBuilder`.
 

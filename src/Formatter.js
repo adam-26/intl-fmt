@@ -1,12 +1,12 @@
 // @flow
 import memoizeIntlConstructor from "intl-format-cache";
 import IntlRelativeFormat from "tag-relativeformat";
-import IntlMessageFormat, {StringBuilderFactory, BuilderContext} from 'tag-messageformat';
+import IntlMessageFormat, {stringBuilderFactory} from 'tag-messageformat';
 import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
 import { hasLocaleData } from "./locale-data-registry";
-import {defaultErrorHandler, intlFormatPropNames} from "./utils";
+import {defaultErrorHandler, intlFormatPropNames, builderContextFactory} from "./utils";
 import type {
     relativeOptions,
     pluralFormatOptions,
@@ -28,7 +28,7 @@ const defaultOpts = {
     initialNow: null,
 
     requireOther: true,
-    messageBuilderFactory: StringBuilderFactory,
+    messageBuilderFactory: stringBuilderFactory,
     onError: defaultErrorHandler,
 
     // Deprecated
@@ -233,7 +233,7 @@ export default class Formatter {
                 messageBuilderFactory: messageBuilderFactory || this._config.messageBuilderFactory,
                 messageBuilderContext: typeof ctxFactory === 'function' ?
                     ctxFactory(messageDescriptor.id) :
-                    new BuilderContext()
+                    builderContextFactory()
             });
     }
 

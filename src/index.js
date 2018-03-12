@@ -9,13 +9,14 @@ import {
     Formatter,
     HtmlFormatter,
     HtmlElementBuilder,
-    addLocaleData,
-    defineMessages,
-    StringBuilderFactory,
-    ArrayBuilderFactory,
     BuilderContext,
     StringFormat,
-    StringFormatFactory
+    addLocaleData,
+    defineMessages,
+    stringBuilderFactory,
+    arrayBuilderFactory,
+    stringFormatFactory,
+    builderContextFactory
 } from './intl-format';
 
 addLocaleData(allLocaleData);
@@ -24,13 +25,14 @@ export {
     Formatter,
     HtmlFormatter,
     HtmlElementBuilder,
-    addLocaleData,
-    defineMessages,
-    StringBuilderFactory,
-    ArrayBuilderFactory,
     BuilderContext,
     StringFormat,
-    StringFormatFactory
+    addLocaleData,
+    defineMessages,
+    stringBuilderFactory,
+    arrayBuilderFactory,
+    stringFormatFactory,
+    builderContextFactory
 };
 
 export default Formatter;

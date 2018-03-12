@@ -9,6 +9,8 @@ This source code is licensed under the BSD-style license found in the LICENSE
 file in the root directory of React's source tree.
 */
 
+import {BuilderContext} from 'tag-messageformat';
+
 const ESCAPED_CHARS = {
   '&': '&amp;',
   '>': '&gt;',
@@ -21,6 +23,10 @@ const UNSAFE_CHARS_REGEX = /[&><"']/g;
 
 export function escape(str) {
   return ('' + str).replace(UNSAFE_CHARS_REGEX, match => ESCAPED_CHARS[match]);
+}
+
+export function builderContextFactory() {
+    return new BuilderContext();
 }
 
 export function filterProps(props, whitelist, defaults = {}) {

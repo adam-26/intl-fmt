@@ -62,8 +62,8 @@
   "dependencies": {
     "intl-format-cache": "^2.0.5",
     "invariant": "^2.1.1",
-    "tag-messageformat": "^3.5.1",
-    "tag-relativeformat": "^3.0.4"
+    "tag-messageformat": "^3.6.0",
+    "tag-relativeformat": "^3.0.5"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
