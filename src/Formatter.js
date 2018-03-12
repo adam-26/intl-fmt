@@ -59,7 +59,7 @@ function getLocaleConfig(locale: string, options) {
     if (!hasLocaleData(locale)) {
         if (!IS_PROD) {
             options.onError(
-                `[Intl Format] Missing locale data for locale: "${locale}". ` +
+                `Missing locale data for locale: "${locale}". ` +
                 `Using default locale: "${defaultLocale}" as fallback.`
             );
         }
