@@ -8,23 +8,29 @@ import allLocaleData from '../locale-data/index';
 import {
     Formatter,
     HtmlFormatter,
+    HtmlElementBuilder,
     addLocaleData,
     defineMessages,
     StringBuilderFactory,
     ArrayBuilderFactory,
-    HtmlElementBuilder
+    BuilderContext,
+    StringFormat,
+    StringFormatFactory
 } from './intl-format';
 
 addLocaleData(allLocaleData);
 
 export {
-    addLocaleData,
-    defineMessages,
     Formatter,
     HtmlFormatter,
     HtmlElementBuilder,
+    addLocaleData,
+    defineMessages,
     StringBuilderFactory,
-    ArrayBuilderFactory
+    ArrayBuilderFactory,
+    BuilderContext,
+    StringFormat,
+    StringFormatFactory
 };
 
 export default Formatter;
