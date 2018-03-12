@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.7.0"></a>
+# [3.7.0](https://github.com/adam-26/intl-format/compare/v3.6.0...v3.7.0) (2018-03-12)
+
+
+### Features
+
+* **code:** add builderContextFactory ([e1792ce](https://github.com/adam-26/intl-format/commit/e1792ce))
+* **code:** add builderContextFactory ([#12](https://github.com/adam-26/intl-format/issues/12)) ([47642bf](https://github.com/adam-26/intl-format/commit/47642bf))
+
+
+
 <a name="3.6.0"></a>
 # [3.6.0](https://github.com/adam-26/intl-format/compare/v3.5.0...v3.6.0) (2018-03-12)
 

@@ -1,6 +1,6 @@
 {
   "name": "intl-fmt",
-  "version": "3.6.0",
+  "version": "3.7.0",
   "description": "This library provides an API to format dates, numbers, strings, and pluralization using ICU message format supporting tags.",
   "keywords": [
     "intl",
