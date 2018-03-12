@@ -79,7 +79,7 @@ export type intlHtmlFormatOptionsType = {
 export type htmlElementOptions = {
     tagName?: htmlElementType,
     htmlMessageBuilderFactory?: () => messageBuilderType,
-    htmlMessageBuilderContextFactory?: () => messageBuilderContextType,
+    htmlMessagebuilderContextFactory?: () => messageBuilderContextType,
     htmlElementBuilderFactory?: () => htmlElementBuilderType
 };
 

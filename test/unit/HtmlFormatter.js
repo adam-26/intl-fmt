@@ -1,4 +1,4 @@
-import {ArrayBuilderFactory} from 'tag-messageformat';
+import {arrayBuilderFactory} from 'tag-messageformat';
 import HtmlFormatter from '../../src/HtmlFormatter';
 import IntlMessageFormat from "tag-messageformat";
 import Formatter from "../../src/Formatter";
@@ -79,15 +79,15 @@ describe('HtmlFormatter', () => {
                 return this._elements;
             };
 
-            function HtmlElementArrayBuilderFactory() {
+            function htmlElementArrayBuilderFactory() {
                 return new HtmlElementArrayBuilder();
             }
 
             it('formats a message using the default message builder', () => {
                 const fmt = new HtmlFormatter('en', {
                     messages: config.messages,
-                    htmlElementBuilderFactory: HtmlElementArrayBuilderFactory,
-                    htmlMessageBuilderFactory: ArrayBuilderFactory
+                    htmlElementBuilderFactory: htmlElementArrayBuilderFactory,
+                    htmlMessageBuilderFactory: arrayBuilderFactory
                 });
 
                 expect(fmt.messageElement({id: 'no_args'})).toEqual(['<span>', [config.messages.no_args], '</span>']);
@@ -97,8 +97,8 @@ describe('HtmlFormatter', () => {
                 const fmt = new HtmlFormatter('en', { messages: config.messages });
 
                 expect(fmt.messageElement({id: 'no_args'}, {}, {
-                    htmlElementBuilderFactory: HtmlElementArrayBuilderFactory,
-                    messageBuilderFactory: ArrayBuilderFactory
+                    htmlElementBuilderFactory: htmlElementArrayBuilderFactory,
+                    messageBuilderFactory: arrayBuilderFactory
                 })).toEqual(['<span>', [config.messages.no_args], '</span>']);
             });
         });
