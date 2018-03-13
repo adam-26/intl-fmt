@@ -17,7 +17,7 @@ import {
     arrayBuilderFactory,
     stringFormatFactory,
     builderContextFactory
-} from './intl-format';
+} from './intl-fmt';
 
 addLocaleData(allLocaleData);
 

@@ -4,16 +4,16 @@
  * See the accompanying LICENSE file for terms.
  */
 
-import IntlMessageFormat from 'tag-messageformat';
-import IntlRelativeFormat from 'tag-relativeformat';
+import TagMessageFormat from 'tag-messageformat';
+import TagRelativeFormat from 'tag-relativeformat';
 
 export function addLocaleData(data = []) {
   let locales = Array.isArray(data) ? data : [data];
 
   locales.forEach(localeData => {
     if (localeData && localeData.locale) {
-      IntlMessageFormat.__addLocaleData(localeData);
-      IntlRelativeFormat.__addLocaleData(localeData);
+      TagMessageFormat.__addLocaleData(localeData);
+      TagRelativeFormat.__addLocaleData(localeData);
     }
   });
 }
@@ -36,7 +36,7 @@ function hasIMFAndIRFLocaleData(locale) {
   let normalizedLocale = locale && locale.toLowerCase();
 
   return !!(
-    IntlMessageFormat.__localeData__[normalizedLocale] &&
-    IntlRelativeFormat.__localeData__[normalizedLocale]
+    TagMessageFormat.__localeData__[normalizedLocale] &&
+    TagRelativeFormat.__localeData__[normalizedLocale]
   );
 }

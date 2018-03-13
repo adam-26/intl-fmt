@@ -47,7 +47,7 @@ function writeUMDFile(filename, module) {
       return bundle.write({
         file: filename,
         format: 'umd',
-        name: `IntlFormatLocaleData.${lang}`,
+        name: `IntlFmtLocaleData.${lang}`,
       });
     })
     .then(() => filename);

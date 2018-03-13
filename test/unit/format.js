@@ -393,7 +393,7 @@ describe('format API', () => {
                 expect(formatRelative(0, {units: 'invalid'})).toBe(String(new Date(0)));
                 expect(consoleError.calls.length).toBe(1);
                 expect(consoleError.calls[0].arguments[0]).toBe(
-                    '[Intl Format] Error formatting relative time.\nError: "invalid" is not a valid IntlRelativeFormat `units` value, it must be one of: "second", "minute", "hour", "day", "month", "year", "second-short", "minute-short", "hour-short", "day-short", "month-short", "year-short"'
+                    '[Intl Format] Error formatting relative time.\nError: "invalid" is not a valid TagRelativeFormat `units` value, it must be one of: "second", "minute", "hour", "day", "month", "year", "second-short", "minute-short", "hour-short", "day-short", "month-short", "year-short"'
                 );
             });
 

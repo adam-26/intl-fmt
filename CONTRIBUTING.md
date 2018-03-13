@@ -31,8 +31,8 @@ Pull requests are very welcome, but should be within the scope of the project, a
 
 7. Last step, [submit the pull request][pr]!
 
-[pr]: https://github.com/adam-26/intl-format/compare/
-[fork]: https://github.com/adam-26/intl-format/fork/
+[pr]: https://github.com/adam-26/intl-fmt/compare/
+[fork]: https://github.com/adam-26/intl-fmt/fork/
 
 ## Releasing a new version
 

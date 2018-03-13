@@ -5,9 +5,9 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 [![npm](https://img.shields.io/npm/v/intl-fmt.svg)](https://www.npmjs.com/package/intl-fmt)
 [![npm](https://img.shields.io/npm/dm/intl-fmt.svg)](https://www.npmjs.com/package/intl-fmt)
-[![CircleCI branch](https://img.shields.io/circleci/project/github/adam-26/intl-format/master.svg)](https://circleci.com/gh/adam-26/intl-format/tree/master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/ba110ff64db325dd9e65/maintainability)](https://codeclimate.com/github/adam-26/intl-format/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/ba110ff64db325dd9e65/test_coverage)](https://codeclimate.com/github/adam-26/intl-format/test_coverage)
+[![CircleCI branch](https://img.shields.io/circleci/project/github/adam-26/intl-fmt/master.svg)](https://circleci.com/gh/adam-26/intl-fmt/tree/master)
+[![Maintainability](https://api.codeclimate.com/v1/badges/5b16c88b047eaf0db246/maintainability)](https://codeclimate.com/github/adam-26/intl-fmt/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/5b16c88b047eaf0db246/test_coverage)](https://codeclimate.com/github/adam-26/intl-fmt/test_coverage)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg)](https://conventionalcommits.org)
 
 > This is a fork of [react-intl](https://github.com/yahoo/react-intl).
@@ -18,12 +18,14 @@ This library provides an API to format dates, numbers, strings, and pluralizatio
 
 > It add supports for `Tags` in translation messages: "please <x:link>click here</x:link>"
 
-> The only _breaking change_ is that whitespace inside **plural** ICU messages is now preserved. This may impact your existing translations.
+> There are 2 _breaking changes_:
+>   * whitespace inside **plural** ICU messages is now preserved. This may impact your existing translations.
+>   * The main browser export name has been changed from `ReactIntl` to `IntlFmt`, this does not impact NodeJS usage.
 
 > You _may_ need to set the `requireOther: false` option for backward compatibility if your ICU complex messages are missing the _other_ option.
 
 #### Using React?
-Use **[react-intl-fmt](https://github.com/adam-26/react-intl-format)**, _the API is compatible with [react-intl](https://github.com/yahoo/react-intl)_.
+Use **[react-intl-fmt](https://github.com/adam-26/react-intl-fmt)**, _the API is compatible with [react-intl](https://github.com/yahoo/react-intl)_.
 
 ### Features
 
@@ -43,7 +45,7 @@ Use **[react-intl-fmt](https://github.com/adam-26/react-intl-format)**, _the API
 
 _Differences_ from the original package include:
  * As well as supporting ICU messages, this package also supports the use of `tags` in translations. [Whats a tag?](#whatsatag)
- * **No React dependency** - want to use `Tags` with React? See [react-intl-fmt](https://github.com/adam-26/react-intl-format), a drop-in replacement for [react-intl](https://github.com/yahoo/react-intl)
+ * **No React dependency** - want to use `Tags` with React? See [react-intl-fmt](https://github.com/adam-26/react-intl-fmt), a drop-in replacement for [react-intl](https://github.com/yahoo/react-intl)
 
 ### Whats a Tag?
 
@@ -143,10 +145,10 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
 ```js
 // This is NOT CURRENTLY SUPPORTED
 <!-- Load ReactIntl and its locale data for French. -->
-<script src="https://unpkg.com/intl-fmt@latest/dist/intl-format.min.js"></script>
+<script src="https://unpkg.com/intl-fmt@latest/dist/intl-fmt.min.js"></script>
 <script src="https://unpkg.com/intl-fmt@latest/locale-data/fr.js"></script>
 <script>
-    IntlFormat.addLocaleData(IntlFormatLocaleData.fr);
+    IntlFmt.addLocaleData(IntlFmtLocaleData.fr);
 </script>
 ```
 
@@ -393,7 +395,7 @@ console.log(formattedMsg); // Welcome back <span class="boldText">Bob</span>
 
 Contribute
 ---------
-Check out the [Contributing document](https://github.com/adam-26/intl-format/blob/master/CONTRIBUTING.md) for the details. Thanks!
+Check out the [Contributing document](https://github.com/adam-26/intl-fmt/blob/master/CONTRIBUTING.md) for the details. Thanks!
 
 For bugs or issues, please open an issue, and you're welcome to submit a PR for bug fixes and feature requests.
 
@@ -403,5 +405,5 @@ License
 -------
 
 This software is free to use under the Yahoo Inc. BSD license.
-See the [LICENSE file](https://github.com/adam-26/intl-format/blob/master/LICENSE.md) for license text and copyright information.
+See the [LICENSE file](https://github.com/adam-26/intl-fmt/blob/master/LICENSE.md) for license text and copyright information.
 
