@@ -15,12 +15,12 @@ const copyright = `/*
 `;
 
 export default {
-  input: p.resolve('src/intl-format.js'),
+  input: p.resolve('src/intl-fmt.js'),
   output: {
-    file: p.resolve(`dist/intl-format.${isProduction ? 'min.js' : 'js'}`),
+    file: p.resolve(`dist/intl-fmt.${isProduction ? 'min.js' : 'js'}`),
     format: 'umd',
   },
-  name: 'IntlFormat',
+  name: 'IntlFmt',
   banner: copyright,
   exports: 'named',
   sourcemap: true,

@@ -199,13 +199,13 @@ export default class Formatter {
             return newOpts;
         }, {});
 
-        return this.newInstance(locale, {
+        return this._newInstance(locale, {
             ...newOpts,
             formatFactories
         });
     }
 
-    newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
+    _newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
         return new Formatter(locale, options);
     }
 

@@ -168,7 +168,7 @@ export default class HtmlFormatter extends Formatter {
             { ...opts, formatterName: fnName });
     }
 
-    newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
+    _newInstance(locale: string, options?: intlFormatOptionsType = {}): Formatter {
         return new HtmlFormatter(locale, options);
     }
 

@@ -1,7 +1,7 @@
 import expect from 'expect';
-import * as IntlFormat from '../../src/intl-format';
+import * as IntlFormat from '../../src/intl-fmt';
 
-describe('intl-format', () => {
+describe('intl-fmt', () => {
     describe('exports', () => {
         it('exports `addLocaleData`', () => {
             expect(IntlFormat.addLocaleData).toBeA('function');

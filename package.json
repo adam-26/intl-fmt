@@ -19,13 +19,13 @@
     "Caridy Patino <caridy@gmail.com>"
   ],
   "license": "BSD-3-Clause",
-  "homepage": "https://github.com/adam-26/intl-format",
+  "homepage": "https://github.com/adam-26/intl-fmt",
   "bugs": {
-    "url": "https://github.com/adam-26/intl-format/issues"
+    "url": "https://github.com/adam-26/intl-fmt/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:adam-26/intl-format.git"
+    "url": "git@github.com:adam-26/intl-fmt.git"
   },
   "main": "./lib/index.js",
   "module": "./lib/index.es.js",
@@ -62,8 +62,8 @@
   "dependencies": {
     "intl-format-cache": "^2.0.5",
     "invariant": "^2.1.1",
-    "tag-messageformat": "^3.6.0",
-    "tag-relativeformat": "^3.0.5"
+    "tag-messageformat": "^3.7.0",
+    "tag-relativeformat": "^3.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.2.0",
@@ -103,7 +103,7 @@
     "rollup-plugin-uglify": "^2.0.0",
     "serialize-javascript": "^1.1.1",
     "standard-version": "^4.3.0",
-    "tag-messageformat-parser": "^2.1.0",
+    "tag-messageformat-parser": "^2.2.2",
     "watchify": "^3.7.0"
   },
   "scripts": {

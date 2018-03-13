@@ -6,10 +6,10 @@ version: 2
 jobs:
   build:
     environment:
-      CC_TEST_REPORTER_ID: ad7ed4dc20d7a325fac20e0c01df7af9d7d40e61cb88db22958627d0159699cd
+      CC_TEST_REPORTER_ID: 2a136d232a7f48a86119a731ae91851be092a0bb182b61032f41d81a7d6e50ff
     docker:
       - image: node:8.4
-    working_directory: ~/intl-format
+    working_directory: ~/intl-fmt
     steps:
       - checkout
       - run:
