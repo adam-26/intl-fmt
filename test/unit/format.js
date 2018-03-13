@@ -2,7 +2,7 @@ import expect, {createSpy, spyOn} from 'expect';
 import IntlMessageFormat from 'tag-messageformat';
 import IntlRelativeFormat from 'tag-relativeformat';
 import IntlPluralFormat from '../../src/plural';
-import {defaultErrorHandler, intlFormatPropNames} from "../../src/utils";
+import {defaultErrorHandler} from "../../src/utils";
 import * as f from '../../src/format';
 
 describe('format API', () => {
@@ -89,6 +89,16 @@ describe('format API', () => {
     });
 
     describe('exports', () => {
+        const intlFormatPropNames = [
+            'formatDate',
+            'formatTime',
+            'formatRelative',
+            'formatNumber',
+            'formatPlural',
+            'formatMessage',
+            'formatHTMLMessage'
+        ];
+
         intlFormatPropNames.forEach((name) => {
             it(`exports \`${name}\``, () => {
                 expect(f[name]).toBeA('function');
