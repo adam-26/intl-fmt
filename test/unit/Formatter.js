@@ -407,7 +407,15 @@ describe('Formatter', () => {
         it('should create a new Formatter class', () => {
             const { locale } = config;
             const now = new Date().getTime();
-            const CustomFormatter = Formatter.create(); // default opts
+            const CustomFormatter = Formatter.create({
+                message: 'm',
+                htmlMessage: 'h',
+                date: 'd',
+                time: 't',
+                number: 'n',
+                relative: 'r',
+                plural: 'p'
+            });
             const customFormatter = new CustomFormatter(locale, config);
 
             expect(customFormatter.m).toBeDefined();

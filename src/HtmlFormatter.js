@@ -1,23 +1,19 @@
 // @flow
 
 import Formatter from "./Formatter";
-import {shortIntlFuncNames, builderContextFactory} from "./utils";
+import {formatterMethodNames, builderContextFactory} from "./utils";
 import invariant from "invariant";
 import {stringBuilderFactory} from "tag-messageformat";
 import type {
     htmlElementOptions,
     dateElementOptions,
-    dateOptions,
     htmlMessageOptions,
     messageElementOptions,
     messageDescriptorType,
-    messageOptions,
     numberElementOptions,
-    numberOptions,
-    pluralFormatOptions,
     relativeElementOptions,
-    relativeOptions,
-    intlHtmlFormatOptionsType, intlFormatOptionsType
+    intlHtmlFormatOptionsType,
+    intlFormatOptionsType
 } from "./types";
 
 function HtmlElementBuilderFactory() {
@@ -70,76 +66,19 @@ function resolveRenderer(tagName, defaultHtmlElement) {
 
 export default class HtmlFormatter extends Formatter {
 
-    static create(options?: Object = {}) {
-        const opts = Object.assign({
-            message: 'm',
-            messageElement: 'me',
-            htmlMessage: 'h',
-            htmlMessageElement: 'he',
-            date: 'd',
-            dateElement: 'de',
-            time: 't',
-            timeElement: 'te',
-            number: 'n',
-            numberElement: 'ne',
-            relative: 'r',
-            relativeElement: 're',
-            plural: 'p'
-        }, options);
+    static create(methodNameOpts?: Object = {}) {
 
-        class CustomFormatter extends HtmlFormatter {
-            [opts.message](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
-                return this.message(messageDescriptor, values, options);
-            }
+        class CustomFormatter extends HtmlFormatter {}
 
-            [opts.htmlMessage](messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
-                return this.htmlMessage(messageDescriptor, values);
-            }
-
-            [opts.date](value: any, options?: dateOptions = {}): string {
-                return this.date(value, options);
-            }
-
-            [opts.time](value: any, options?: dateOptions = {}): string {
-                return this.time(value, options);
-            }
-
-            [opts.number](value: any, options?: numberOptions = {}): string {
-                return this.number(value, options);
-            }
-
-            [opts.relative](value: any, options?: relativeOptions = {}): string {
-                return this.relative(value, options);
-            }
-
-            [opts.plural](value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
-                return this.plural(value, options);
-            }
-
-            [opts.messageElement](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageElementOptions = {}): mixed {
-                return this.messageElement(messageDescriptor, values, options);
-            }
-
-            [opts.htmlMessageElement](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: htmlMessageOptions = {}): mixed {
-                return this.htmlMessageElement(messageDescriptor, values, options);
-            }
-
-            [opts.dateElement](value: any, options?: dateElementOptions = {}): string {
-                return this.dateElement(value, options);
-            }
-
-            [opts.timeElement](value: any, options?: dateElementOptions = {}): string {
-                return this.timeElement(value, options);
-            }
-
-            [opts.numberElement](value: any, options?: numberElementOptions = {}): string {
-                return this.numberElement(value, options);
-            }
-
-            [opts.relativeElement](value: any, options?: relativeElementOptions = {}): string {
-                return this.relativeElement(value, options);
-            }
-        }
+        formatterMethodNames.forEach(formatterMethodName => {
+            const elementMethodName = formatterMethodName + 'Element';
+            [formatterMethodName, elementMethodName].forEach(methodName => {
+                const shortMethodName = methodNameOpts[methodName];
+                if (typeof shortMethodName === 'string' && shortMethodName !== null) {
+                    CustomFormatter.prototype[shortMethodName] = HtmlFormatter.prototype[methodName];
+                }
+            });
+        });
 
         return CustomFormatter;
     }
@@ -148,7 +87,7 @@ export default class HtmlFormatter extends Formatter {
         super(locale, Object.assign({}, defaultOpts, options));
 
         // Assign the default html elements for each formatter
-        this._htmlElements = shortIntlFuncNames.reduce((acc, fnName) => {
+        this._htmlElements = formatterMethodNames.reduce((acc, fnName) => {
             if (fnName === 'plural') {
                 return acc;
             }
