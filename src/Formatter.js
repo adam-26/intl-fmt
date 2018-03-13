@@ -6,7 +6,7 @@ import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
 import { hasLocaleData } from "./locale-data-registry";
-import {defaultErrorHandler, builderContextFactory} from "./utils";
+import {defaultErrorHandler, builderContextFactory, formatterMethodNames} from "./utils";
 import type {
     relativeOptions,
     pluralFormatOptions,
@@ -87,46 +87,16 @@ function getLocaleConfig(locale: string, options) {
 
 export default class Formatter {
 
-    static create(options?: Object = {}) {
-        const opts = Object.assign({
-            message: 'm',
-            htmlMessage: 'h',
-            date: 'd',
-            time: 't',
-            number: 'n',
-            relative: 'r',
-            plural: 'p'
-        }, options);
+    static create(methodNameOpts?: Object = {}) {
 
-        class CustomFormatter extends Formatter {
-            [opts.message](messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
-                return this.message(messageDescriptor, values, options);
-            }
+        class CustomFormatter extends Formatter { }
 
-            [opts.htmlMessage](messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
-                return this.htmlMessage(messageDescriptor, values);
+        formatterMethodNames.forEach(methodName => {
+            const shortMethodName = methodNameOpts[methodName];
+            if (typeof shortMethodName === 'string' && shortMethodName !== null) {
+                CustomFormatter.prototype[shortMethodName] = Formatter.prototype[methodName];
             }
-
-            [opts.date](value: any, options?: dateOptions = {}): string {
-                return this.date(value, options);
-            }
-
-            [opts.time](value: any, options?: dateOptions = {}): string {
-                return this.time(value, options);
-            }
-
-            [opts.number](value: any, options?: numberOptions = {}): string {
-                return this.number(value, options);
-            }
-
-            [opts.relative](value: any, options?: relativeOptions = {}): string {
-                return this.relative(value, options);
-            }
-
-            [opts.plural](value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
-                return this.plural(value, options);
-            }
-        }
+        });
 
         return CustomFormatter;
     }

@@ -16,7 +16,8 @@ import {
     stringBuilderFactory,
     arrayBuilderFactory,
     stringFormatFactory,
-    builderContextFactory
+    builderContextFactory,
+    formatterMethodNames
 } from './intl-fmt';
 
 addLocaleData(allLocaleData);
@@ -32,7 +33,8 @@ export {
     stringBuilderFactory,
     arrayBuilderFactory,
     stringFormatFactory,
-    builderContextFactory
+    builderContextFactory,
+    formatterMethodNames
 };
 
 export default Formatter;

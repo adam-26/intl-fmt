@@ -46,7 +46,7 @@ export function defaultErrorHandler(msg, exception) {
     console.error(`[Intl Format] ${msg}${errMsg}`);
 }
 
-export const shortIntlFuncNames = [
+export const formatterMethodNames = [
     'date',
     'time',
     'relative',

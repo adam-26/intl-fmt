@@ -350,7 +350,21 @@ describe('HtmlFormatter', () => {
         it('should create a new Formatter class', () => {
             const { locale } = config;
             const now = new Date().getTime();
-            const CustomFormatter = HtmlFormatter.create(); // default opts
+            const CustomFormatter = HtmlFormatter.create({
+                message: 'm',
+                messageElement: 'me',
+                htmlMessage: 'h',
+                htmlMessageElement: 'he',
+                date: 'd',
+                dateElement: 'de',
+                time: 't',
+                timeElement: 'te',
+                number: 'n',
+                numberElement: 'ne',
+                relative: 'r',
+                relativeElement: 're',
+                plural: 'p'
+            });
             const customFormatter = new CustomFormatter(locale, config);
 
             expect(customFormatter.m).toBeDefined();
