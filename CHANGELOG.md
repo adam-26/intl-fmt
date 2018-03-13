@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.9.1"></a>
+## [3.9.1](https://github.com/adam-26/intl-fmt/compare/v3.9.0...v3.9.1) (2018-03-13)
+
+
+### Bug Fixes
+
+* **code:** Remove bind ([#2](https://github.com/adam-26/intl-fmt/issues/2)) ([86501e9](https://github.com/adam-26/intl-fmt/commit/86501e9))
+
+
+
 <a name="3.9.0"></a>
 # [3.9.0](https://github.com/adam-26/intl-fmt/compare/v3.8.0...v3.9.0) (2018-03-13)
 
