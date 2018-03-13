@@ -56,16 +56,6 @@ export const shortIntlFuncNames = [
     'htmlMessage'
 ];
 
-export const intlFormatPropNames = [
-    'formatDate',
-    'formatTime',
-    'formatRelative',
-    'formatNumber',
-    'formatPlural',
-    'formatMessage',
-    'formatHTMLMessage'
-];
-
 export const dateTimeFormatPropNames = [
   'localeMatcher',
   'formatMatcher',

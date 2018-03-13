@@ -6,7 +6,7 @@ import invariant from 'invariant';
 import IntlPluralFormat from "./plural";
 import * as format from "./format";
 import { hasLocaleData } from "./locale-data-registry";
-import {defaultErrorHandler, intlFormatPropNames, builderContextFactory} from "./utils";
+import {defaultErrorHandler, builderContextFactory} from "./utils";
 import type {
     relativeOptions,
     pluralFormatOptions,
@@ -83,16 +83,6 @@ function getLocaleConfig(locale: string, options) {
         formats: formats || defaultFormats,
         messages: messages || defaultMessages
     };
-}
-
-function bindFormatters(config, formatterState): Object {
-    return intlFormatPropNames.reduce((boundFormatFns, name) => {
-        if (name !== 'now') {
-            boundFormatFns[name] = format[name].bind(null, config, formatterState);
-        }
-
-        return boundFormatFns;
-    }, {});
 }
 
 export default class Formatter {
@@ -179,8 +169,6 @@ export default class Formatter {
             ...(formatFactories || getFormatFactories()),
             now: () => this.now()
         };
-
-        this._formatters = bindFormatters(this._config, this._formatterState)
     }
 
     get options() {
@@ -229,7 +217,9 @@ export default class Formatter {
         const {messageBuilderFactory, messageBuilderContextFactory} = options;
         const ctxFactory = messageBuilderContextFactory || this._config.messageBuilderContextFactory;
 
-        return this._formatters.formatMessage(
+        return format.formatMessage(
+            this._config,
+            this._formatterState,
             messageDescriptor,
             values, {
                 messageBuilderFactory: messageBuilderFactory || this._config.messageBuilderFactory,
@@ -240,26 +230,50 @@ export default class Formatter {
     }
 
     htmlMessage(messageDescriptor: messageDescriptorType, values?: Object = {}): mixed {
-        return this._formatters.formatHTMLMessage(messageDescriptor, values);
+        return format.formatHTMLMessage(
+            this._config,
+            this._formatterState,
+            messageDescriptor,
+            values);
     }
 
     date(value: any, options?: dateOptions = {}): string {
-        return this._formatters.formatDate(value, options);
+        return format.formatDate(
+            this._config,
+            this._formatterState,
+            value,
+            options);
     }
 
     time(value: any, options?: dateOptions = {}): string {
-        return this._formatters.formatTime(value, options);
+        return format.formatTime(
+            this._config,
+            this._formatterState,
+            value,
+            options);
     }
 
     number(value: any, options?: numberOptions = {}): string {
-        return this._formatters.formatNumber(value, options);
+        return format.formatNumber(
+            this._config,
+            this._formatterState,
+            value,
+            options);
     }
 
     relative(value: any, options?: relativeOptions = {}): string {
-        return this._formatters.formatRelative(value, options);
+        return format.formatRelative(
+            this._config,
+            this._formatterState,
+            value,
+            options);
     }
 
     plural(value: any, options?: pluralFormatOptions = {}): 'zero' | 'one' | 'two' | 'few' | 'many' | 'other' {
-        return this._formatters.formatPlural(value, options);
+        return format.formatPlural(
+            this._config,
+            this._formatterState,
+            value,
+            options);
     }
 }

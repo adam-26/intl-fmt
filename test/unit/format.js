@@ -89,6 +89,16 @@ describe('format API', () => {
     });
 
     describe('exports', () => {
+        const intlFormatPropNames = [
+            'formatDate',
+            'formatTime',
+            'formatRelative',
+            'formatNumber',
+            'formatPlural',
+            'formatMessage',
+            'formatHTMLMessage'
+        ];
+
         intlFormatPropNames.forEach((name) => {
             it(`exports \`${name}\``, () => {
                 expect(f[name]).toBeA('function');
