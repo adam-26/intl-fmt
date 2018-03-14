@@ -192,6 +192,7 @@ console.log(customerFormatter.m({ id: 'msg_id' }));
    * `initialNow: number | () => number` - the time value used for _now_ when rendering dates and times
    * `defaultLocale: string` - the formatters default locale, defaults to `en`
    * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
+   * `defaultOptions: {[methodName]: Object}` - assign default options used by each formatter method
    * `formats: Object` - custom formats, defaults to `{}`
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.
@@ -285,6 +286,7 @@ console.log(customerFormatter.me({ id: 'msg_id' }));
    * `initialNow: number | () => number` - the time value used for _now_ when rendering dates and times
    * `defaultLocale: string` - the formatters default locale, defaults to `en`
    * `defaultFormats: Object` - the formatters default formats, defaults to `{}`
+   * `defaultOptions: {[methodName]: Object}` - assign default options used by each formatter method
    * `formats: Object` - custom formats, defaults to `{}`
    * `messages: { [id]: message }` - translated messages for the specified locale(s)
    * `requireOther: boolean` - true for ICU _plural_ and _select_ messages to **require** an `other` option (as defined in the ICU "spec"), defaults to `true`. Set this to `false` for backward compatibility with `react-intl`.

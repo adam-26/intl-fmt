@@ -21,19 +21,16 @@ const defaultMessages = {};
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const defaultOpts = {
+    initialNow: null,
     messages: null,
     formats: null,
     defaultLocale: 'en',
     defaultFormats: {},
-    initialNow: null,
+    defaultOptions: {},
 
     requireOther: true,
     messageBuilderFactory: stringBuilderFactory,
-    onError: defaultErrorHandler,
-
-    // Deprecated
-    textRenderer: null,
-    textComponent: null,
+    onError: defaultErrorHandler
 };
 
 const optionNames = Object.keys(defaultOpts);
@@ -53,8 +50,24 @@ function getLocaleConfig(locale: string, options) {
         messages,
         formats,
         defaultLocale,
-        defaultFormats
+        defaultFormats,
+        defaultOptions
     } = options;
+
+    const formatterOptions = formatterMethodNames.reduce((acc, formatterName) => {
+        const defaultOption = defaultOptions[formatterName] || {};
+        if (defaultOption !== null && typeof defaultOption === 'object' && !Array.isArray(defaultOption)) {
+            acc[formatterName] = defaultOptions[formatterName];
+        }
+
+        if (!IS_PROD) {
+            if (typeof defaultOption !== 'object' || Array.isArray(defaultOption) || defaultOption === null) {
+                options.onError(`'defaultOption.${formatterName}' option must be an object that defines default options for ${formatterName}.`);
+            }
+        }
+
+        return acc;
+    }, {});
 
     if (!hasLocaleData(locale)) {
         if (!IS_PROD) {
@@ -74,6 +87,7 @@ function getLocaleConfig(locale: string, options) {
             locale: defaultLocale,
             formats: defaultFormats,
             messages: defaultMessages,
+            defaultOptions: formatterOptions
         };
     }
 
@@ -81,7 +95,8 @@ function getLocaleConfig(locale: string, options) {
         ...options,
         locale: locale || defaultLocale,
         formats: formats || defaultFormats,
-        messages: messages || defaultMessages
+        messages: messages || defaultMessages,
+        defaultOptions: formatterOptions
     };
 }
 
@@ -113,18 +128,6 @@ export default class Formatter {
             formatFactories,
             ...configOpts
         } = Object.assign({}, defaultOpts, options);
-        const { textComponent, textRenderer } = configOpts;
-
-        if (!IS_PROD) {
-            if (textComponent !== null) {
-                console.warn('[Intl Format] Option `textComponent` has been deprecated, use the `HtmlFormatter` to render HTML elements.');
-            }
-
-            if (textRenderer !== null) {
-                console.warn('[Intl Format] Option `textRenderer` has been deprecated, use the `HtmlFormatter` to render HTML elements.');
-            }
-        }
-
         this._config = getLocaleConfig(locale, configOpts);
 
         // Used to stabilize time when performing an initial rendering so that

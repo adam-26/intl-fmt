@@ -54,13 +54,14 @@ function getNamedFormat(formats, type, name, onError) {
 }
 
 export function formatDate(config, state, value, options = {}) {
-  const {locale, formats, onError} = config;
-  const {format} = options;
+  const {locale, formats, onError, defaultOptions} = config;
+  const formatOptions = Object.assign({}, defaultOptions.date, options);
+  const {format} = formatOptions;
 
   let date = new Date(value);
   let defaults = format && getNamedFormat(formats, 'date', format, onError);
   let filteredOptions = filterProps(
-    options,
+      formatOptions,
     dateTimeFormatPropNames,
     defaults
   );
@@ -77,13 +78,14 @@ export function formatDate(config, state, value, options = {}) {
 }
 
 export function formatTime(config, state, value, options = {}) {
-  const {locale, formats, onError} = config;
-  const {format} = options;
+  const {locale, formats, onError, defaultOptions} = config;
+  const formatOptions = Object.assign({}, defaultOptions.time, options);
+  const {format} = formatOptions;
 
   let date = new Date(value);
   let defaults = format && getNamedFormat(formats, 'time', format, onError);
   let filteredOptions = filterProps(
-    options,
+    formatOptions,
     dateTimeFormatPropNames,
     defaults
   );
@@ -109,13 +111,14 @@ export function formatTime(config, state, value, options = {}) {
 }
 
 export function formatRelative(config, state, value, options = {}) {
-  const {locale, formats, onError} = config;
-  const {format} = options;
+  const {locale, formats, onError, defaultOptions} = config;
+  const formatOptions = Object.assign({}, defaultOptions.relative, options);
+  const {format} = formatOptions;
 
   let date = new Date(value);
-  let now = new Date(options.now);
+  let now = new Date(formatOptions.now);
   let defaults = format && getNamedFormat(formats, 'relative', format, onError);
-  let filteredOptions = filterProps(options, relativeFormatPropNames, defaults);
+  let filteredOptions = filterProps(formatOptions, relativeFormatPropNames, defaults);
 
   // Capture the current threshold values, then temporarily override them with
   // specific values just for this render.
@@ -138,11 +141,12 @@ export function formatRelative(config, state, value, options = {}) {
 }
 
 export function formatNumber(config, state, value, options = {}) {
-  const {locale, formats, onError} = config;
-  const {format} = options;
+  const {locale, formats, onError, defaultOptions} = config;
+  const formatOptions = Object.assign({}, defaultOptions.number, options);
+  const {format} = formatOptions;
 
   let defaults = format && getNamedFormat(formats, 'number', format, onError);
-  let filteredOptions = filterProps(options, numberFormatPropNames, defaults);
+  let filteredOptions = filterProps(formatOptions, numberFormatPropNames, defaults);
 
   try {
     return state.getNumberFormat(locale, filteredOptions).format(value);
@@ -156,9 +160,10 @@ export function formatNumber(config, state, value, options = {}) {
 }
 
 export function formatPlural(config, state, value, options = {}) {
-  const {locale, onError} = config;
+  const {locale, onError, defaultOptions} = config;
+  const formatOptions = Object.assign({}, defaultOptions.plural, options);
 
-  let filteredOptions = filterProps(options, pluralFormatPropNames);
+  let filteredOptions = filterProps(formatOptions, pluralFormatPropNames);
 
   try {
     return state.getPluralFormat(locale, filteredOptions).format(value);
@@ -178,7 +183,17 @@ export function formatMessage(
   values = {},
   formatOptions = {}
 ) {
-  const {locale, formats, messages, defaultLocale, defaultFormats, requireOther, stringFormatFactory, onError} = config;
+  const {
+    locale,
+    formats,
+    messages,
+    defaultLocale,
+    defaultFormats,
+    requireOther,
+    stringFormatFactory,
+    onError,
+    defaultOptions
+  } = config;
 
   const {id, defaultMessage} = messageDescriptor;
 
@@ -197,13 +212,13 @@ export function formatMessage(
   let formattedMessage;
   const formatterOpts = {
       requireOther: requireOther,
-      stringFormatFactory: stringFormatFactory
-  };
+      stringFormatFactory: stringFormatFactory };
+  const msgFormatOptions = Object.assign({}, defaultOptions.message, formatOptions);
 
   if (message) {
     try {
       let formatter = state.getMessageFormat(message, locale, formats, formatterOpts);
-      formattedMessage = formatter.format(values, formatOptions);
+      formattedMessage = formatter.format(values, msgFormatOptions);
     } catch (e) {
       if (!IS_PROD) {
         onError(
@@ -238,7 +253,7 @@ export function formatMessage(
         formatterOpts
       );
 
-      formattedMessage = formatter.format(values, formatOptions);
+      formattedMessage = formatter.format(values, msgFormatOptions);
     } catch (e) {
       if (!IS_PROD) {
         onError(`Error formatting the default message for: "${id}"`, e);
