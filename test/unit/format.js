@@ -68,6 +68,7 @@ describe('format API', () => {
 
             defaultLocale: 'en',
             defaultFormats: {},
+            defaultOptions: {},
             requireOther: true,
             onError: defaultErrorHandler
         };
@@ -146,6 +147,18 @@ describe('format API', () => {
         it('formats date ms timestamp values', () => {
             const timestamp = Date.now();
             expect(formatDate(timestamp)).toBe(df.format(timestamp));
+        });
+
+        it('uses configured defaultOptions', () => {
+            const {locale, formats} = config;
+            formatDate = f.formatDate.bind(null, {
+                ...config,
+                defaultOptions: { date: { format: 'year-only' } }
+            }, state);
+
+            const date   = new Date();
+            df = new Intl.DateTimeFormat(locale, formats.date['year-only']);
+            expect(formatDate(date)).toBe(df.format(date));
         });
 
         describe('options', () => {
@@ -248,6 +261,18 @@ describe('format API', () => {
         it('formats date ms timestamp values', () => {
             const timestamp = Date.now();
             expect(formatTime(timestamp)).toBe(df.format(timestamp));
+        });
+
+        it('uses configured defaultOptions', () => {
+            const {locale, formats} = config;
+            formatTime = f.formatTime.bind(null, {
+                ...config,
+                defaultOptions: { time: { format: 'hour-only' } }
+            }, state);
+
+            const date   = new Date();
+            df = new Intl.DateTimeFormat(locale, formats.time['hour-only']);
+            expect(formatTime(date)).toBe(df.format(date));
         });
 
         describe('options', () => {
@@ -390,6 +415,18 @@ describe('format API', () => {
             expect(IntlRelativeFormat.thresholds).toEqual(IRF_THRESHOLDS);
         });
 
+        it('uses configured defaultOptions', () => {
+            const {locale, formats} = config;
+            formatRelative = f.formatRelative.bind(null, {
+                ...config,
+                defaultOptions: { relative: { format: 'seconds' } }
+            }, state);
+
+            const date   = -(1000 * 120);
+            rf = new IntlRelativeFormat(locale, formats.relative.seconds);
+            expect(formatRelative(date)).toBe(rf.format(date, {now}));
+        });
+
         describe('options', () => {
             it('accepts empty options', () => {
                 expect(formatRelative(0, {})).toBe(rf.format(0, {now}));
@@ -526,6 +563,18 @@ describe('format API', () => {
             expect(formatNumber('1.10')).toBe(nf.format('1.10'));
         });
 
+        it('uses configured defaultOptions', () => {
+            const {locale, formats} = config;
+            const num    = 0.505;
+            formatNumber = f.formatNumber.bind(null, {
+                ...config,
+                defaultOptions: { number: { format: 'percent' } }
+            }, state);
+
+            nf = new Intl.NumberFormat(locale, formats.number.percent);
+            expect(formatNumber(num)).toBe(nf.format(num));
+        });
+
         describe('options', () => {
             it('accepts empty options', () => {
                 expect(formatNumber(1000, {})).toBe(nf.format(1000));
@@ -622,6 +671,16 @@ describe('format API', () => {
             expect(formatPlural('0.1')).toBe(pf.format('0.1'));
             expect(Number('1.0')).toBe(1.0);
             expect(formatPlural('1.0')).toBe(pf.format('1.0'));
+        });
+
+        it('uses configured defaultOptions', () => {
+            formatPlural = f.formatPlural.bind(null, {
+                ...config,
+                defaultOptions: { plural: { style: 'ordinal' } }
+            }, state);
+
+            pf = new IntlPluralFormat(config.locale, {style: 'ordinal'});
+            expect(formatPlural(22)).toBe(pf.format(22));
         });
 
         describe('options', () => {
@@ -777,6 +836,24 @@ describe('format API', () => {
             f.setProd(false);
             expect(formatMessage({id: 'no_args'})).toBe(messages.no_args);
             expect(state.getMessageFormat.calls.length).toBe(2);
+        });
+
+        it('uses configured defaultOptions', () => {
+            const {locale, messages} = config;
+            function TestFormatter() {}
+            TestFormatter.prototype.format = function () {
+                return 'hello';
+            };
+
+            formatMessage = f.formatMessage.bind(null, {
+                ...config,
+                defaultOptions: { message: { stringFormatFactory: () => new TestFormatter() } }
+            }, state);
+
+            const values = { name: 'bob' };
+            const mf = new IntlMessageFormat(messages.with_arg, locale);
+            expect(formatMessage({ id: '1', defaultMessage: messages.with_arg}, values))
+                .toBe(mf.format(values, { stringFormatFactory: () => new TestFormatter() }));
         });
 
         describe('fallbacks', () => {

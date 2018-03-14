@@ -29,6 +29,7 @@ export type intlFormatOptionsType = {
     formats?: Object,
     defaultLocale?: string,
     defaultFormats?: Object,
+    defaultFormatterOptions?: Object,
     requireOther: boolean,
     stringFormatFactory?: () => stringFormatType,
     formatFactories?: Object,
@@ -38,11 +39,7 @@ export type intlFormatOptionsType = {
     messageBuilderFactory: () => messageBuilderType,
     messageBuilderContextFactory: () => messageBuilderContextType,
 
-    onError?: (message: string, exception?: Error) => void,
-
-    // Deprecated
-    textRenderer?: (text: string) => mixed,
-    textComponent?: string,
+    onError?: (message: string, exception?: Error) => void
 };
 
 export type dateTimeFormatOptions = {

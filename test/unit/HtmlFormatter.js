@@ -38,7 +38,7 @@ describe('HtmlFormatter', () => {
                 messages: {}
             };
             const fmt = new HtmlFormatter('af', opts);
-            expect(Object.keys(fmt.options)).toHaveLength(15);
+            expect(Object.keys(fmt.options)).toHaveLength(14);
         });
     });
 

@@ -96,7 +96,7 @@ describe('Formatter', () => {
                 messages: {}
             };
             const fmt = new Formatter('af', opts);
-            expect(Object.keys(fmt.options)).toHaveLength(11);
+            expect(Object.keys(fmt.options)).toHaveLength(10);
         });
     });
 
