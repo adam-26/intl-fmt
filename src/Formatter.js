@@ -17,15 +17,15 @@ import type {
     messageOptions
 } from "./types";
 
-const defaultMessages = {};
 const IS_PROD = process.env.NODE_ENV === 'production';
 
 const defaultOpts = {
     initialNow: null,
-    messages: null,
+    messages: {},
     formats: null,
     defaultLocale: 'en',
     defaultFormats: {},
+    defaultMessages: {},
     defaultOptions: {},
 
     requireOther: true,
@@ -51,6 +51,7 @@ function getLocaleConfig(locale: string, options) {
         formats,
         defaultLocale,
         defaultFormats,
+        defaultMessages,
         defaultOptions
     } = options;
 
@@ -87,6 +88,7 @@ function getLocaleConfig(locale: string, options) {
             locale: defaultLocale,
             formats: defaultFormats,
             messages: defaultMessages,
+            defaultMessages: defaultMessages,
             defaultOptions: formatterOptions
         };
     }
@@ -95,7 +97,8 @@ function getLocaleConfig(locale: string, options) {
         ...options,
         locale: locale || defaultLocale,
         formats: formats || defaultFormats,
-        messages: messages || defaultMessages,
+        messages: messages,
+        defaultMessages: defaultMessages,
         defaultOptions: formatterOptions
     };
 }

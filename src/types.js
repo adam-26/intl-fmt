@@ -29,6 +29,7 @@ export type intlFormatOptionsType = {
     formats?: Object,
     defaultLocale?: string,
     defaultFormats?: Object,
+    defaultMessages?: Object,
     defaultFormatterOptions?: Object,
     requireOther: boolean,
     stringFormatFactory?: () => stringFormatType,
