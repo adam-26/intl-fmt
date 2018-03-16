@@ -807,11 +807,11 @@ describe('format API', () => {
             expect(formatMessage({id: 'no_args'})).toBe(mf.format());
         });
 
-        it('formats a default messages', () => {
+        it('formats defaultMessages text in preference to the messageDescriptor defaultValue', () => {
             const {locale} = config;
-            const msgId = 'only_default';
-            const defaultMsg = 'a default message';
-            formatMessage = f.formatMessage.bind(null, {...config, defaultMessages: { [msgId]: defaultMsg } }, state);
+            const msgId = 'no_args';
+            const defaultMsg = 'a default message msg with no args';
+            formatMessage = f.formatMessage.bind(null, {...config, defaultMessages: { [msgId]: defaultMsg }, messages: {} }, state);
             const mf = new IntlMessageFormat(defaultMsg, locale);
 
             expect(formatMessage({id: msgId})).toBe(mf.format());
