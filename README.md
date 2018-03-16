@@ -154,8 +154,8 @@ _If you want CDN, please [submit an Issue/PR](https://github.com/adam-26/intl-fm
 
 ## Intl Formatter API
 
-### _static_ `create(options: createFormatterOpts): IntlFmt`
-A factory method for creating new `IntlFmt` classes that include _custom shorthand method names_.
+### _static_ `extend(options: createFormatterOpts): IntlFmt`
+A factory method for generating new `IntlFmt` classes that include _custom shorthand method names_.
 
 Many _i18n_ packages use either `_()` or `t()` for formatting translated messages. You can now use this factory method to assign your own shorthand syntax to the `IntlFmt` class.
 
@@ -172,8 +172,8 @@ Example:
 ```js
 import IntlFmt from 'intl-fmt';
 
-// Create a new Formatter class
-const CustomFormatter = IntlFmt.create({
+// Generate a new Formatter class
+const CustomFormatter = IntlFmt.extend({
   message: 'm',
   // other options here...
 });
@@ -240,7 +240,7 @@ The parent `IntlFmt` instance values will be used where no `options` as defined.
 
 ## Intl Html Formatter
 
-### _static_ `create(options: createFormatterOpts): IntlFmt`
+### _static_ `extend(options: createFormatterOpts): IntlFmt`
 A factory method for creating new `IntlFmt` classes that include _custom shorthand method names_.
 
 Many _i18n_ packages use either `_()` or `t()` for formatting translated messages. You can now use this factory method to assign your own shorthand syntax to the `IntlFmt` class.
@@ -264,8 +264,8 @@ Example:
 ```js
 import {HtmlFormatter} from 'intl-fmt';
 
-// Create a new Formatter class
-const CustomHtmlFormatter = HtmlFormatter.create({
+// Generate a new Formatter class
+const CustomHtmlFormatter = HtmlFormatter.extend({
   message: 'm',
   messageElement: 'me',
   // other options here

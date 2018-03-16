@@ -319,6 +319,17 @@ describe('Formatter', () => {
                 expect(fmt.message({id: 'no_args'})).toBe(mf.format());
             });
 
+            it('formats a defaultMessage value', () => {
+                const msgId = '__default_only__';
+                const defaultMsg = 'a default message';
+                const { locale, ...formatterOpts } = config;
+
+                fmt = new Formatter(locale, {...formatterOpts, defaultMessages: { [msgId]: defaultMsg } });
+                const mf = new IntlMessageFormat(defaultMsg, locale);
+
+                expect(fmt.message({id: msgId})).toBe(mf.format());
+            });
+
             it('formats a message with values', () => {
                 const {locale, messages} = config;
                 const mf = new IntlMessageFormat(messages.with_arg, locale);
@@ -403,11 +414,15 @@ describe('Formatter', () => {
         });
     });
 
-    describe('create', () => {
+    describe('extend', () => {
+        it('should still support static `create` syntax', () => {
+            expect(Formatter.create({}) instanceof Formatter).toBe(false);
+        });
+
         it('should create a new Formatter class', () => {
             const { locale } = config;
             const now = new Date().getTime();
-            const CustomFormatter = Formatter.create({
+            const CustomFormatter = Formatter.extend({
                 message: 'm',
                 htmlMessage: 'h',
                 date: 'd',

@@ -47,6 +47,8 @@ export class HtmlElementBuilder {
     }
 }
 
+const IS_PROD = process.env.NODE_ENV === 'production';
+
 const defaultOpts = {
     htmlElementBuilderFactory: HtmlElementBuilderFactory,
     htmlMessageBuilderFactory: stringBuilderFactory,
@@ -67,6 +69,14 @@ function resolveRenderer(tagName, defaultHtmlElement) {
 export default class HtmlFormatter extends Formatter {
 
     static create(methodNameOpts?: Object = {}) {
+        if (!IS_PROD) {
+            console.warn('[Intl Format] HtmlFormatter static function `create` is deprecated, use the static `extend` function instead. This will be removed in a future version.');
+        }
+
+        return HtmlFormatter.extend(methodNameOpts);
+    }
+
+    static extend(methodNameOpts?: Object = {}) {
 
         class CustomFormatter extends HtmlFormatter {}
 

@@ -106,6 +106,14 @@ function getLocaleConfig(locale: string, options) {
 export default class Formatter {
 
     static create(methodNameOpts?: Object = {}) {
+        if (!IS_PROD) {
+            console.warn('[Intl Format] Formatter static function `create` is deprecated, use the static `extend` function instead. This will be removed in a future version.');
+        }
+
+        return Formatter.extend(methodNameOpts);
+    }
+
+    static extend(methodNameOpts?: Object = {}) {
 
         class CustomFormatter extends Formatter { }
 
