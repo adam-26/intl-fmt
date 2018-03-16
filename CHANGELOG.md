@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.12.0"></a>
+# [3.12.0](https://github.com/adam-26/intl-fmt/compare/v3.11.0...v3.12.0) (2018-03-16)
+
+
+### Features
+
+* **code:** Support defaultMessages ([#5](https://github.com/adam-26/intl-fmt/issues/5)) ([0b11222](https://github.com/adam-26/intl-fmt/commit/0b11222))
+
+
+
 <a name="3.11.0"></a>
 # [3.11.0](https://github.com/adam-26/intl-fmt/compare/v3.10.0...v3.11.0) (2018-03-14)
 
