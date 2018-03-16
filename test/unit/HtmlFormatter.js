@@ -38,7 +38,7 @@ describe('HtmlFormatter', () => {
                 messages: {}
             };
             const fmt = new HtmlFormatter('af', opts);
-            expect(Object.keys(fmt.options)).toHaveLength(14);
+            expect(Object.keys(fmt.options)).toHaveLength(15);
         });
     });
 
@@ -117,6 +117,19 @@ describe('HtmlFormatter', () => {
             it('formats a message', () => {
                 expect(fmt.messageElement({id: 'no_args'})).toBe(`!${config.messages.no_args}!`);
                 expect(renderMethodFn.mock.calls).toHaveLength(1);
+            });
+
+            it('formats a defaultMessage value', () => {
+                const msgId = '__default_only__';
+                const defaultMsg = 'a default message';
+                const { locale, ...formatterOpts } = config;
+
+                fmt = new HtmlFormatter(locale, {...formatterOpts,
+                    defaultHtmlElement: renderMethodFn,
+                    defaultMessages: { [msgId]: defaultMsg }
+                });
+
+                expect(fmt.messageElement({id: msgId})).toBe(`!${defaultMsg}!`);
             });
 
             it('formats a htmlMessage', () => {
@@ -346,11 +359,15 @@ describe('HtmlFormatter', () => {
         });
     });
 
-    describe('create', () => {
+    describe('extend', () => {
+        it('should still support static `create` syntax', () => {
+           expect(HtmlFormatter.create({}) instanceof HtmlFormatter).toBe(false);
+        });
+
         it('should create a new Formatter class', () => {
             const { locale } = config;
             const now = new Date().getTime();
-            const CustomFormatter = HtmlFormatter.create({
+            const CustomFormatter = HtmlFormatter.extend({
                 message: 'm',
                 messageElement: 'me',
                 htmlMessage: 'h',

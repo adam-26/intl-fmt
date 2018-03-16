@@ -18,6 +18,7 @@ describe('format API', () => {
 
         config = {
             locale: 'en',
+            defaultMessages: {},
 
             messages: {
                 no_args: 'Hello, World!',
@@ -804,6 +805,16 @@ describe('format API', () => {
             const mf = new IntlMessageFormat(messages.no_args, locale);
 
             expect(formatMessage({id: 'no_args'})).toBe(mf.format());
+        });
+
+        it('formats defaultMessages text in preference to the messageDescriptor defaultValue', () => {
+            const {locale} = config;
+            const msgId = 'no_args';
+            const defaultMsg = 'a default message msg with no args';
+            formatMessage = f.formatMessage.bind(null, {...config, defaultMessages: { [msgId]: defaultMsg }, messages: {} }, state);
+            const mf = new IntlMessageFormat(defaultMsg, locale);
+
+            expect(formatMessage({id: msgId})).toBe(mf.format());
         });
 
         it('formats messages with placeholders', () => {

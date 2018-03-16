@@ -187,6 +187,7 @@ export function formatMessage(
     locale,
     formats,
     messages,
+    defaultMessages,
     defaultLocale,
     defaultFormats,
     requireOther,
@@ -195,11 +196,12 @@ export function formatMessage(
     defaultOptions
   } = config;
 
-  const {id, defaultMessage} = messageDescriptor;
+  const {id} = messageDescriptor;
 
   // `id` is a required field of a Message Descriptor.
   invariant(id, '[Intl Format] An `id` must be provided to format a message.');
 
+  const defaultMessage = (defaultMessages && defaultMessages[id]) || messageDescriptor.defaultMessage;
   const message = messages && messages[id];
   const hasValues = Object.keys(values).length > 0;
 
