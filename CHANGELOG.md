@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.12.1"></a>
+## [3.12.1](https://github.com/adam-26/intl-fmt/compare/v3.12.0...v3.12.1) (2018-03-17)
+
+
+### Bug Fixes
+
+* **code:** changeLocale ([c78da7f](https://github.com/adam-26/intl-fmt/commit/c78da7f))
+* **code:** changeLocale ([#6](https://github.com/adam-26/intl-fmt/issues/6)) ([0f6a79e](https://github.com/adam-26/intl-fmt/commit/0f6a79e))
+
+
+
 <a name="3.12.0"></a>
 # [3.12.0](https://github.com/adam-26/intl-fmt/compare/v3.11.0...v3.12.0) (2018-03-16)
 
