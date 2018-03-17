@@ -22,7 +22,7 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 const defaultOpts = {
     initialNow: null,
     messages: {},
-    formats: null,
+    formats: {},
     defaultLocale: 'en',
     defaultFormats: {},
     defaultMessages: {},
@@ -166,9 +166,31 @@ export default class Formatter {
         // remove 'now' from the factories
         // eslint-disable-next-line no-unused-vars
         const { now, ...formatFactories } = this._formatterState;
-        const newOpts = optionNames.reduce((newOpts, optName) => {
-            newOpts[optName] = typeof options[optName] !== 'undefined' ? options[optName] : this._config[optName];
-            return newOpts;
+
+        const newOpts = optionNames.reduce((reducedOpts, optName) => {
+            const currentValue = this._config[optName];
+            const newValue = options[optName];
+            const hasNewValue = typeof newValue !== 'undefined';
+
+            if (hasNewValue && defaultOpts[optName] !== null && typeof defaultOpts[optName] === 'object') {
+                // Object types must be merged
+                if (optName === 'formats') {
+                    const formatKeys = Object.keys(currentValue).concat(Object.keys(newValue));
+
+                    // Merge format(s) for each formatter
+                    reducedOpts[optName] = formatKeys.reduce((reducedFormats, formatKey) => {
+                        reducedFormats[formatKey] = Object.assign({}, currentValue[formatKey], newValue[formatKey]);
+                        return reducedFormats;
+                    }, {});
+                } else {
+                    reducedOpts[optName] = Object.assign({}, currentValue, newValue);
+                }
+            }
+            else {
+                reducedOpts[optName] = hasNewValue ? newValue : currentValue;
+            }
+
+            return reducedOpts;
         }, {});
 
         return this._newInstance(locale, {

@@ -147,9 +147,17 @@ describe('Formatter', () => {
             expect(newFmt._config.messages).toEqual(fmt._config.messages);
         });
 
-        it('should assign new messages', () => {
-            const newFmt = fmt.changeLocale('en', { messages: {} });
-            expect(newFmt._config.messages).not.toEqual(fmt._config.messages);
+        it('should append new messages', () => {
+            const newFmt = fmt.changeLocale('en', { messages: { no_args: 'greetings', new_msg: 'appended' } });
+            expect(newFmt._config.messages).toEqual({...fmt._config.messages, no_args: 'greetings', new_msg: 'appended'});
+        });
+
+        it('should merge new formats', () => {
+            const { locale, ...formatterOpts } = config;
+            fmt = new Formatter(locale, {...formatterOpts, formats: { date: { short: 'short' } } });
+
+            const newFmt = fmt.changeLocale('en', { formats: { date: { long: 'long' } } });
+            expect(newFmt._config.formats).toEqual({ date: { short: 'short', long: 'long' } });
         });
     });
 
