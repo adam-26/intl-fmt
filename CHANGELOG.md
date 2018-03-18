@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="3.13.0"></a>
+# [3.13.0](https://github.com/adam-26/intl-fmt/compare/v3.12.1...v3.13.0) (2018-03-18)
+
+
+### Features
+
+* **code:** getRawMessage ([40ea758](https://github.com/adam-26/intl-fmt/commit/40ea758))
+* **code:** getRawMessage ([#7](https://github.com/adam-26/intl-fmt/issues/7)) ([e41a439](https://github.com/adam-26/intl-fmt/commit/e41a439))
+
+
+
 <a name="3.12.1"></a>
 ## [3.12.1](https://github.com/adam-26/intl-fmt/compare/v3.12.0...v3.12.1) (2018-03-17)
 
