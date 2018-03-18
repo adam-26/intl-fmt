@@ -219,6 +219,14 @@ export default class Formatter {
                 () => new Date().getTime();
     }
 
+    getRawMessage(messageDescriptor: messageDescriptorType): string {
+        const {defaultMessage, id} = messageDescriptor;
+        const {messages, defaultMessages} = this._config;
+
+        // This must produce the same result as logic in `formatMessage()` method
+        return (messages && messages[id]) || (defaultMessages && defaultMessages[id]) || defaultMessage || id;
+    }
+
     message(messageDescriptor: messageDescriptorType, values?: Object = {}, options?: messageOptions = {}): mixed {
         const {messageBuilderFactory, messageBuilderContextFactory} = options;
         const ctxFactory = messageBuilderContextFactory || this._config.messageBuilderContextFactory;
