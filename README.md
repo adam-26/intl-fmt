@@ -211,6 +211,9 @@ Returns the value being used to represent `now`.
 #### `setNow(now?: number): void`
 Sets the value used to represent `now`.
 
+#### `getRawMessage(msgDescriptor: MessageDescriptor): string`
+Returns the raw string value for the provided message descriptor
+
 #### `message(msgDescriptor: MessageDescriptor, values?: Object, options?: MessageOptions): mixed`
 Formats a message descriptor using the optionally assigned values.
 

@@ -198,6 +198,36 @@ describe('Formatter', () => {
         });
     });
 
+    describe('getRawMessage', () => {
+        let fmt;
+
+        beforeEach(() => {
+            const { locale, ...formatterOpts } = config;
+            fmt = new Formatter(locale, {
+                ...formatterOpts,
+                defaultMessages: {
+                    no_args: 'default no args',
+                    default_only: 'default msg'
+                }
+            });
+        });
+
+        it('should return the raw message string', () => {
+            const raw = fmt.getRawMessage({ id: 'no_args'});
+            expect(raw).toBe(config.messages.no_args);
+        });
+
+        it('should return the raw default message string', () => {
+            const raw = fmt.getRawMessage({ id: 'default_only'});
+            expect(raw).toBe('default msg');
+        });
+
+        it('should return the message descriptor defaultMessage string', () => {
+            const raw = fmt.getRawMessage({ id: 'missing', defaultMessage: 'descriptor msg' });
+            expect(raw).toBe('descriptor msg');
+        });
+    });
+
     describe('format', () => {
         let fmt;
 
